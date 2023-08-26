@@ -3,6 +3,8 @@
 
 # Ignore other generated files
 *.o
+*.s
+*.elf
 *.jar
 
 # Ignore pdf and zip files
