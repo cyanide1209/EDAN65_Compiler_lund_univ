@@ -5,7 +5,11 @@
 *.o
 *.s
 *.elf
+
+# Ignore generated jar-files, but not those needed for build
 *.jar
+!gradle-wrapper.jar
+!beaver-rt.jar
 
 # Ignore pdf and zip files
 *.zip
