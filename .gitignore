@@ -15,6 +15,9 @@
 bin/
 build/
 
+# Ignore files created by gradle
+.gradle/
+
 # Ignore the generated Java AST classes from JastAdd
 gen/
 
