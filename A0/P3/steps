@@ -1,0 +1,13 @@
+mkdir -p p   //makes package p
+touch p/A.java
+touch p/B.java  //creates A and B within the directory p and write code in both the files
+javac p/*.java  //compiles A and B
+java p.B  //runs B which implements A
+vi MANIFEST.MF //create manifest file and then add code to it as directed
+jar cfm HelloJar.jar MANIFEST.MF p/A.class p/B.class  //create a jar file of A.class and B.class
+java -jar HelloJar.jar
+
+*change code of B for the last 2 parts*
+in order to abort click control+C on both mac and windows
+
+
