@@ -1,0 +1,48 @@
+1.1
+	*open terminal on mac and comand prompt on wondows*
+1.2
+	echo $HOME
+1.3
+	ls
+1.4
+	the -t command lists the items by modification time in reverse chronological order
+1.5
+	commands: 
+	cd ..
+	problem:
+	the files within this are the different users on the computer
+1.6
+	commands:
+	cd /bin
+	ls
+	problem:
+	no i do not recoginze these files
+1.7	
+	(in home)
+	mkdir adir | mkdir bdir
+1.8
+	cd adir(enter adir)
+	touch afile
+1.9
+	(in adir) 
+	cp afile ../bdir
+1.10
+	cd .. (now in home)
+	cp -r adir cdir
+1.11
+	(in home)
+	mv bdir/afile bfile
+1.12
+	(in home)
+	mv cdir ddir
+1.13
+	(in home)
+	mv bdir/bfile ddir
+1.14
+	(in home)
+	mv adir ddir| mv bdir ddir
+1.15
+	(in home)
+	rm -r ddir
+1.16
+	done!
