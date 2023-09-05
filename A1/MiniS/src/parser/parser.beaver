@@ -14,10 +14,10 @@
 %goal program;
 
 program = stmt;
-stmt = forStmt | ifStmt | assignment
-forStmt = FOR id ASSIGN expr UNTIL expr DO stmt OD
-ifStmt = IF expr THEN stmt FI
-assignment = id ASSIGN expr
-expr = id | numeral | NOT expr
-id = ID
-numeral = NUMERAL
+stmt = forStmt | ifStmt | assignment;
+forStmt = FOR id ASSIGN expr UNTIL expr DO stmt OD;
+ifStmt = IF expr THEN stmt FI;
+assignment = id ASSIGN expr;
+expr = id | numeral | NOT expr;
+id = ID;
+numeral = NUMERAL;
