@@ -1,0 +1,23 @@
+%class "LangParser";
+%package "lang.ast";
+
+%embed {:
+	static public class SyntaxError extends RuntimeException { public SyntaxError(String msg) {super(msg);}}
+	// Disable syntax error recovery
+	protected void recoverFromError(Symbol token, TokenStream in) {
+		throw new SyntaxError("Cannot recover from the syntax error");
+	}
+:};
+
+%terminals FOR, UNTIL, DO, OD, IF, THEN, FI, ASSIGN, NOT, ID, NUMERAL;
+
+%goal program;
+
+program = stmt;
+stmt = forStmt | ifStmt | assignment
+forStmt = FOR id ASSIGN expr UNTIL expr DO stmt OD
+ifStmt = IF expr THEN stmt FI
+assignment = id ASSIGN expr
+expr = id | numeral | NOT expr
+id = ID
+numeral = NUMERAL

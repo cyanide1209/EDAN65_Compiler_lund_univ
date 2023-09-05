@@ -1,5 +1,5 @@
 for i = 1 until 5 do
-	if i == 4 then 
+	if 2.0 then 
 		test = i
 	fi
 od 
