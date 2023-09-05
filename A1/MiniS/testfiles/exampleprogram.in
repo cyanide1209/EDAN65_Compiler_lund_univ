@@ -1,0 +1,5 @@
+for i = 1 until 5 do
+	if i == 4 then 
+		test = i
+	fi
+od 
