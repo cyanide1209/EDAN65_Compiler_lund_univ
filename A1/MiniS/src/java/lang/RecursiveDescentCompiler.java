@@ -21,25 +21,57 @@ public abstract class RecursiveDescentCompiler {
 	protected abstract void parseProgram(){
 		accept();
 		int cToken;
+		int testToken;
 		cToken = peek();
-		while(cToken != 0){
+		while(peek() != 0){
 			switch(cToken){
-				case 1:
-				case 2:
-				case 3:
-				case 4:
-				case 5:
-				case 6:
-				case 7:
-				case 8:
-				case 9:
-				case 10:
-				case 11:
+				case 9://for
+				       accept(9);
+				       accept(3);
+				       accept(11);
+				       expression();
+				       accept(4);
+				       expression();
+				       accept(5);
+				       parseProgram();
+				       accept(1);
+				       break;
+				case 10://if
+					accept(10);
+					expression();
+					accept(6);
+					parseProgram();
+					accept(2);
+					break;
+				case 3://assignment
+			       		accept(3);
+			       		accept(11);
+					expression();
+			       		break;
+				default:
+					error("Syntax Error");
+
 					
 
+		}
+		return;
+	}
+
+	void expression(){
+		if(peek() == 3 || peek() == 7){
+			accept();
+		}else if(peek() == 8){
+			accept();
+			if(peek() == 3 || peek() == 7){
+				accept();
+			} else {
+				error("Syntax Error");
 			}
+		}else{
+			error("Syntax Error");
 		}
 	}
+		
 
 
 	
