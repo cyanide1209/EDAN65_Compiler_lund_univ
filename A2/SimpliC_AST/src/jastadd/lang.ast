@@ -1,5 +1,16 @@
 Program ::= Function*;
 
-Function ::= name:FunctionID;
+Function ::= name:FunctionID code:CodeBlock;
+CodeBlock ::= [Expression];
 FunctionID ::= <ID>;
 
+abstract Expression;
+Binding:Expression ::= name:IdUse variable:Value;
+Declaration:Expression ::= name:IdDecl;
+IdDecl ::= <ID>;
+
+abstract Value;
+abstract AssigmentRight:Value;
+
+Nbr : AssigmentRight ::= <NUM>;
+IdUse : AssigmentRight ::= <ID>;

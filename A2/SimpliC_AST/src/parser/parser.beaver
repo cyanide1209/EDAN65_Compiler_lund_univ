@@ -21,17 +21,35 @@
 %typeof id_decl = "IdDecl";
 %typeof binding = "Binding";
 
+%typeof asgnright = "AssigmentRight";
+%typeof value = "Value";
+%typeof nbr = "Nbr";
+
+%typeof expr = "Expression";
+%typeof expr_list = "List";
+%typeof codeblock = "CodeBlock";
+
 %goal program;
 
 program = function_list.a {: return new Program(a); :};
-function = INT functionID.a LEFTPARA RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new Function(a); :};
+function = INT functionID.a LEFTPARA RIGHTPARA codeblock.b {: return new Function(a,b); :};
 
 function_list = function.a {: return new List().add(a); :} 
 | function_list.a function.b {: return a.add(b); :};
 
-declr = INT id_decl SEMICOLON;
-binding = id_use ASSIGN NUM SEMICOLON;
+declr = INT id_decl.a SEMICOLON{:return new Declaration(a); :};
+binding = id_use.a ASSIGN value.b SEMICOLON {: return new Binding(a,b); :};
+expr = declr | binding;
+expr_list = expr.a {: return new List().add(a); :} 
+| expr_list.a expr.b {: return a.add(b); :};
 
+codeblock = LEFTCURLYBRACE RIGHTCURLYBRACE{: return new CodeBlock(); :}
+| LEFTCURLYBRACE expr_list.a RIGHTCURLYBRACE{: return new CodeBlock(new Opt(a)); :}; 
+
+value = asgnright;
+asgnright = nbr | id_use;
+
+nbr = NUM.a{: return new Nbr(a); :};
 id_use = ID.id {: return new IdUse(id); :} ;
 functionID = ID.id {: return new FunctionID(id); :};
 id_decl = ID.id {: return new IdDecl(id); :} ;
