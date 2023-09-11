@@ -2,14 +2,27 @@ package lang;
 import lang.ast.LangParser;
 import lang.ast.LangScanner;
 import static lang.ast.LangParser.Terminals.*;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
 
 //Abstract base class for recursive decent parsers.
 //You should implement the parseProgram() method to parse a MiniS program.
 
 
-public abstract class RecursiveDescentCompiler {
+public class RecursiveDescentCompiler extends RDPTemplate{
 	private LangScanner scanner;
 	private beaver.Symbol currentToken;
+
+	public static void main(String[] args){
+		RecursiveDescentCompiler r = new RecursiveDescentCompiler();
+		try{
+			FileReader fr = new FileReader(args[0]);
+			LangScanner scannerz = new LangScanner(fr);
+			r.parse(scannerz);
+		} catch(FileNotFoundException f){
+			System.err.println(f.getMessage());
+		}
+	}
 
 	//Initialize the parser and start parsing via the parseProgram() method.
 	public void parse(LangScanner scanner) {
@@ -18,51 +31,53 @@ public abstract class RecursiveDescentCompiler {
 		accept(EOF); // Ensure all input is processed.
 	}
 	
-	protected abstract void parseProgram(){
+	protected void parseProgram(){
 		accept();
 		int cToken;
 		int testToken;
 		cToken = peek();
-		while(peek() != 0){
+		while(peek() != EOF){
 			switch(cToken){
-				case 9://for
-				       accept(9);
-				       accept(3);
-				       accept(11);
+				case FOR://for
+				       accept(FOR);
+				       accept(ID);
+				       accept(ASSIGN);
 				       expression();
-				       accept(4);
+				       accept(UNTIL);
 				       expression();
-				       accept(5);
+				       accept(DO);
 				       parseProgram();
-				       accept(1);
+				       accept(OD);
 				       break;
-				case 10://if
-					accept(10);
+				case IF://if
+					accept(IF);
 					expression();
-					accept(6);
+					accept(THEN);
 					parseProgram();
-					accept(2);
+					accept(FI);
 					break;
-				case 3://assignment
-			       		accept(3);
-			       		accept(11);
+				case ID://assignment
+			       		accept(ID);
+			       		accept(ASSIGN);
 					expression();
 			       		break;
 				default:
 					error("Syntax Error");
+					break;
 
 					
 
 		}
 		return;
 	}
+}
 
 	void expression(){
-		if(peek() == 3 || peek() == 7){
+		if(peek() == ID || peek() == NUMERAL){
 			accept();
-		}else if(peek() == 8){
+		}else if(peek() == NOT){
 			accept();
-			if(peek() == 3 || peek() == 7){
+			if(peek() == ID || peek() == NUMERAL){
 				accept();
 			} else {
 				error("Syntax Error");

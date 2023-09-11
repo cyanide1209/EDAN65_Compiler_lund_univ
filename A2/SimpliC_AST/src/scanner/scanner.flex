@@ -29,6 +29,7 @@ import lang.ast.LangParser.SyntaxError;
 // macros
 WhiteSpace = [ ] | \t | \f | \n | \r
 ID = [a-zA-Z]+
+NUM = [0-9]+
 
 %%
 
@@ -41,7 +42,11 @@ ID = [a-zA-Z]+
 "["           {return sym(Terminals.LEFTBRACKET);}
 "]"           {return sym(Terminals.RIGHTBRACKET);}
 "int"         {return sym(Terminals.INT);}
+";"           {return sym(Terminals.SEMICOLON);}
+"="           {return sym(Terminals.ASSIGN);}
 
+
+{NUM}         { return sym(Terminals.NUM);}
 
 {ID}          { return sym(Terminals.ID); }
 

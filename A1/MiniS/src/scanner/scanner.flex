@@ -48,7 +48,7 @@ Numeral = [0-9]+ ["."]? [0-9]*
 // "in"          { return sym(Terminals.IN); }
 // "end"         { return sym(Terminals.END); }
 "="           { return sym(Terminals.ASSIGN); }
-"!"           { return sym(Terminals.NOT); }
+"not"           { return sym(Terminals.NOT); }
 // "*"           { return sym(Terminals.MUL); }
 {ID}          { return sym(Terminals.ID); }
 {Numeral}     { return sym(Terminals.NUMERAL); }

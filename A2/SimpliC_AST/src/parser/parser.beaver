@@ -9,12 +9,16 @@
 	}
 :};
 
-%terminals ID,LEFTPARA, RIGHTPARA, LEFTBRACKET, RIGHTBRACKET, INT;
+%terminals ID,LEFTPARA, RIGHTPARA, LEFTBRACKET, RIGHTBRACKET, INT, ASSIGN, SEMICOLON, NUM;
 
 %typeof program = "Program";
 %typeof function = "Function";
+%typeof asgnstmt = "Assignment Statement";
+%typeof declr = "Declaration";
 
 %goal program;
 
 program = ID.id {: return new Program(id); :} ;
 function = INT ID LEFTPARA RIGHTPARA LEFTBRACKET RIGHTBRACKET;
+asgnsmt = INT IdDecl ASSIGN NUM | IdUse ASSIGN NUM | INT IdDecl ASSIGN IdUse | IdUse ASSIGN IdUse
+declr = INT IdDecl
