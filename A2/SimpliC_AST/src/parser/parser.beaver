@@ -9,10 +9,12 @@
 	}
 :};
 
-%terminals ID;
+%terminals ID,LEFTPARA, RIGHTPARA, LEFTBRACKET, RIGHTBRACKET, INT;
 
 %typeof program = "Program";
+%typeof function = "Function";
 
 %goal program;
 
 program = ID.id {: return new Program(id); :} ;
+function = INT ID LEFTPARA RIGHTPARA LEFTBRACKET RIGHTBRACKET;

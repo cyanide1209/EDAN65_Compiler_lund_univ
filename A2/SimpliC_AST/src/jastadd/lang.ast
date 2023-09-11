@@ -1,1 +1,1 @@
-Program ::= <ID>;
+Program ::= Function+;
