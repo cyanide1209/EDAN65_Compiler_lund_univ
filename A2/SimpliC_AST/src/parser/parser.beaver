@@ -15,10 +15,15 @@
 %typeof function = "Function";
 %typeof asgnstmt = "Assignment Statement";
 %typeof declr = "Declaration";
+%typeof functionID = "FunctionID";
+%typeof function_list = "List";
 
 %goal program;
 
-program = ID.id {: return new Program(id); :} ;
-function = INT ID LEFTPARA RIGHTPARA LEFTBRACKET RIGHTBRACKET;
+program = function_list;
+function = INT FunctionID LEFTPARA RIGHTPARA LEFTBRACKET RIGHTBRACKET;
 asgnsmt = INT IdDecl ASSIGN NUM | IdUse ASSIGN NUM | INT IdDecl ASSIGN IdUse | IdUse ASSIGN IdUse
 declr = INT IdDecl
+
+functionID = ID.id {: return new FunctionID(id); :};
+function_list = function.a {: return new List().add(a); :};
