@@ -39,8 +39,8 @@ NUM = [0-9]+
 // token definitions
 "("           {return sym(Terminals.LEFTPARA);}
 ")"           {return sym(Terminals.RIGHTPARA);}
-"["           {return sym(Terminals.LEFTBRACKET);}
-"]"           {return sym(Terminals.RIGHTBRACKET);}
+"{"           {return sym(Terminals.LEFTCURLYBRACE);}
+"}"           {return sym(Terminals.RIGHTCURLYBRACE);}
 "int"         {return sym(Terminals.INT);}
 ";"           {return sym(Terminals.SEMICOLON);}
 "="           {return sym(Terminals.ASSIGN);}
