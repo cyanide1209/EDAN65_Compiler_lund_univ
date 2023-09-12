@@ -30,6 +30,7 @@ import lang.ast.LangParser.SyntaxError;
 WhiteSpace = [ ] | \t | \f | \n | \r
 ID = [a-zA-Z]+
 NUM = [0-9]+
+COMMENT = "//"~"\n"
 
 %%
 
@@ -62,6 +63,8 @@ NUM = [0-9]+
 {NUM}         { return sym(Terminals.NUM);}
 
 {ID}          { return sym(Terminals.ID); }
+
+{COMMENT}     { return sym(Terminals.COMMENT)}
 
 <<EOF>>       { return sym(Terminals.EOF); }
 

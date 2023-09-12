@@ -10,7 +10,7 @@
 :};
 
 %terminals ID,LEFTPARA, RIGHTPARA, LEFTCURLYBRACE, RIGHTCURLYBRACE, INT, ASSIGN, SEMICOLON, NUM, ADD, MINUS, DIV, MUL, MOD;
-%terminals GREATERTHAN, GREATERTHANEQUAL, LESSTHAN, LESSTHANEQUAL, EQUALS, NOTEQUALS, ARGUMENT, RETURN;
+%terminals GREATERTHAN, GREATERTHANEQUAL, LESSTHAN, LESSTHANEQUAL, EQUALS, NOTEQUALS, ARGUMENT, RETURN, COMMENT;
 %typeof program = "Program";
 %typeof function = "Function";
 %typeof functionID = "FunctionID";
@@ -62,8 +62,8 @@ expr_list = expr.a {: return new List().add(a); :}
 declr = INT id_decl.a SEMICOLON {: return new Declaration(a, new Opt()); :} 
 		| INT id_decl.a ASSIGN term.b SEMICOLON{: return new Declaration(a,new Opt(b)); :};
 binding = id_use.a ASSIGN term.b SEMICOLON {: return new Binding(a,b); :};
-if = IF LEFTPARA compare.a RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new If(a,new Opt()); :}
-		| IF LEFTPARA compare.a RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new If(a,new Opt(b)); :};
+if = IF LEFTPARA comparecont.a RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new If(a,new Opt()); :}
+		| IF LEFTPARA comparecont.a RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new If(a,new Opt(b)); :};
 
 returnstmt = RETURN variable SEMICOLON {: return new ReturnState(); :};
 
@@ -77,6 +77,7 @@ mul = lowprio.a MUL lowprio.b{:return new Mul(a,b); :};
 div = lowprio.a DIV lowprio.b{:return new Div(a,b); :};
 mod = lowprio.a MOD lowprio.b{:return new Mod(a,b); :};
 
+comparecont = compare | MINUS compare;
 compare = equals | notequals | lessthan | lessthaneqaul | greaterthan | greaterthanequal; 
 equals = term.a EQUALS term.b {: return new Equals(a,b); :};
 notequals = term.a NOTEQUALS term.b {: return new NotEquals(a,b); :};
