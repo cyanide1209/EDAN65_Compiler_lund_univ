@@ -11,10 +11,10 @@ Declaration:Expression ::= IdDecl [Term];
 ReturnState:Expression ::= Variable;
 If:Expression ::= ComparisonContainer [Expression];
 IdUse : Variable ::= <ID>;
-While:Expression ::= Comparison [Expression];
+While:Expression ::= ComparisonContainer [Expression];
 
 IdDecl ::= <ID>;
-Nbr : Lowprio ::= <NUM>;
+Nbr : Variable ::= <NUM>;
 
 abstract Term;
 Sum:Term ::= left:Term right:Term;
@@ -25,7 +25,7 @@ Mul:Lowprio ::= left:Lowprio right:Lowprio;
 Div:Lowprio ::= left:Lowprio right:Lowprio;
 Mod:Lowprio ::= left:Lowprio right:Lowprio;
 
-ComparisonContainer;
+ComparisonContainer ::= Comparison;
 abstract Comparison;
 Equals:Comparison ::= left:Term right:Term;
 NotEquals:Comparison ::= left:Term right:Term;

@@ -74,8 +74,8 @@ binding = id_use.a ASSIGN term.b SEMICOLON {: return new Binding(a,b); :};
 if = IF comparecont.a LEFTCURLYBRACE RIGHTCURLYBRACE {: return new If(a,new Opt()); :}
 		| IF comparecont.a LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new If(a,new Opt(b)); :};
 
-while = WHILE LEFTPARA compare.a RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new While(a,new Opt()); :}
-		| WHILE LEFTPARA compare.a RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new While(a,new Opt(b)); :};
+while = WHILE comparecont.a LEFTCURLYBRACE RIGHTCURLYBRACE {: return new While(a,new Opt()); :}
+		| WHILE comparecont.a LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new While(a,new Opt(b)); :};
 
 returnstmt = RETURN variable.a SEMICOLON {: return new ReturnState(a); :};
 
