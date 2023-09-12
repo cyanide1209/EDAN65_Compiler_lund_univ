@@ -1,0 +1,7 @@
+int a(){
+    int x = 6;
+    //x is set equal to 6
+    if -(x==7){
+        return x;
+    }
+}

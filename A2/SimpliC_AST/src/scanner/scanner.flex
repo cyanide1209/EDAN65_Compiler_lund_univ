@@ -36,6 +36,7 @@ COMMENT = "//"~"\n"
 
 // discard whitespace information
 {WhiteSpace}  { }
+{COMMENT}     { }
 
 // token definitions
 "("           {return sym(Terminals.LEFTPARA);}
@@ -64,7 +65,7 @@ COMMENT = "//"~"\n"
 
 {ID}          { return sym(Terminals.ID); }
 
-{COMMENT}     { return sym(Terminals.COMMENT)}
+{COMMENT}     { return sym(Terminals.COMMENT);}
 
 <<EOF>>       { return sym(Terminals.EOF); }
 

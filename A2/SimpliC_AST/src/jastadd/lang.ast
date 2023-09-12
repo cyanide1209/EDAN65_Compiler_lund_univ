@@ -7,8 +7,8 @@ abstract Expression;
 Binding:Expression ::= IdUse Term;
 Declaration:Expression ::= IdDecl [Term];
 ReturnState:Expression ::= Variable;
-If:Expression ::= Comparison [Expression];
-IdUse : Lowprio ::= <ID>;
+If:Expression ::= ComparisonContainer [Expression];
+IdUse : Variable ::= <ID>;
 IdDecl ::= <ID>;
 Nbr : Lowprio ::= <NUM>;
 
@@ -21,6 +21,7 @@ Mul:Lowprio ::= left:Lowprio right:Lowprio;
 Div:Lowprio ::= left:Lowprio right:Lowprio;
 Mod:Lowprio ::= left:Lowprio right:Lowprio;
 
+ComparisonContainer;
 abstract Comparison;
 Equals:Comparison ::= left:Term right:Term;
 NotEquals:Comparison ::= left:Term right:Term;
@@ -30,5 +31,3 @@ GreaterThan:Comparison ::= left:Term right:Term;
 GreaterThanEqual:Comparison ::= left:Term right:Term;
 
 abstract Variable:Lowprio;
-
-abstract Argument:Variable;
