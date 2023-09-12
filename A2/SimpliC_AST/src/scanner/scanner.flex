@@ -44,6 +44,7 @@ NUM = [0-9]+
 "int"         {return sym(Terminals.INT);}
 ";"           {return sym(Terminals.SEMICOLON);}
 "="           {return sym(Terminals.ASSIGN);}
+"+"           {return sym(Terminals.ADD);}
 
 
 {NUM}         { return sym(Terminals.NUM);}

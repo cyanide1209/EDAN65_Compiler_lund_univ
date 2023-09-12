@@ -5,12 +5,14 @@ CodeBlock ::= [Expression];
 FunctionID ::= <ID>;
 
 abstract Expression;
-Binding:Expression ::= name:IdUse variable:Value;
+Binding:Expression ::= name:IdUse variable:Term;
 Declaration:Expression ::= name:IdDecl;
 IdDecl ::= <ID>;
 
-abstract Value;
-abstract AssigmentRight:Value;
 
-Nbr : AssigmentRight ::= <NUM>;
-IdUse : AssigmentRight ::= <ID>;
+abstract Term;
+Sum:Term ::= left:Term right:Term;
+
+
+Nbr : Term ::= <NUM>;
+IdUse : Term ::= <ID>;
