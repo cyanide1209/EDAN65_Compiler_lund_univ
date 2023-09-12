@@ -1,18 +1,14 @@
 Program ::= Function*;
 
-Function ::= name:FunctionID code:CodeBlock;
-CodeBlock ::= [Expression];
+Function ::= FunctionID [Expression];
 FunctionID ::= <ID>;
 
 abstract Expression;
-Binding:Expression ::= name:IdUse variable:Term;
-Declaration:Expression ::= name:IdDecl;
+Binding:Expression ::= IdUse Term;
+Declaration:Expression ::= IdDecl [Term];
+IdUse : Term ::= <ID>;
 IdDecl ::= <ID>;
-
 
 abstract Term;
 Sum:Term ::= left:Term right:Term;
-
-
 Nbr : Term ::= <NUM>;
-IdUse : Term ::= <ID>;

@@ -16,7 +16,6 @@
 %typeof functionID = "FunctionID";
 %typeof function_list = "List";
 
-%typeof codeblock = "CodeBlock";
 %typeof expr = "Expression";
 %typeof expr_list = "List";
 %typeof declr = "Declaration";
@@ -32,19 +31,20 @@
 %goal program;
 
 program = function_list.a {: return new Program(a); :};
-function = INT functionID.a LEFTPARA RIGHTPARA codeblock.b {: return new Function(a,b); :};
+function = INT functionID.a LEFTPARA RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new Function(a,new Opt()); :}
+			| INT functionID.a LEFTPARA RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new Function(a,new Opt(b)); :};
 
 function_list = function.a {: return new List().add(a); :} 
-| function_list.a function.b {: return a.add(b); :};
-
-declr = INT id_decl.a SEMICOLON{:return new Declaration(a); :};
+				| function_list.a function.b {: return a.add(b); :};
+declr = INT id_decl.a SEMICOLON {: return new Declaration(a, new Opt()); :} 
+		| INT id_decl.a ASSIGN term.b SEMICOLON{: return new Declaration(a,new Opt(b)); :};
 binding = id_use.a ASSIGN term.b SEMICOLON {: return new Binding(a,b); :};
 expr = declr | binding;
 expr_list = expr.a {: return new List().add(a); :} 
-| expr_list.a expr.b {: return a.add(b); :};
+			| expr_list.a expr.b {: return a.add(b); :};
 
 codeblock = LEFTCURLYBRACE RIGHTCURLYBRACE{: return new CodeBlock(); :}
-| LEFTCURLYBRACE expr_list.a RIGHTCURLYBRACE{: return new CodeBlock(new Opt(a)); :}; 
+			| LEFTCURLYBRACE expr_list.a RIGHTCURLYBRACE{: return new CodeBlock(new Opt(a)); :}; 
 
 
 term = nbr | id_use | sum;
