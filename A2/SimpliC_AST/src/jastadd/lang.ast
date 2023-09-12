@@ -21,6 +21,8 @@ Mod:Lowprio ::= left:Lowprio right:Lowprio;
 
 abstract Variable:Lowprio;
 
+abstract Argument:Variable;
+
 Nbr : Lowprio ::= <NUM>;
 
 
