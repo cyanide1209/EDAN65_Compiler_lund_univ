@@ -28,7 +28,7 @@ import lang.ast.LangParser.SyntaxError;
 
 // macros
 WhiteSpace = [ ] | \t | \f | \n | \r
-ID = [a-zA-Z]+
+ID = [a-zA-Z]+[a-zA-Z0-9]*
 NUM = [0-9]+
 COMMENT = "//"~"\n"
 

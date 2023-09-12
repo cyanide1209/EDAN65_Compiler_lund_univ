@@ -2,13 +2,16 @@ Program ::= Function*;
 
 Function ::= FunctionID [Argument] [Expression];
 FunctionID ::= <ID>;
+FunctionIDUse ::= <ID>;
 Argument ::= ArgumentID;
 ArgumentID ::= <ID>;
+ArgumentIDUse ::= Variable;
 
 abstract Expression;
 Binding:Expression ::= IdUse Term;
 Declaration:Expression ::= IdDecl [Term];
-ReturnState:Expression ::= Variable;
+ReturnState:Expression ::= Term;
+FunctionCallStmt:Expression ::= FunctionCall;
 If:Expression ::= ComparisonContainer [Expression];
 IdUse : Variable ::= <ID>;
 While:Expression ::= ComparisonContainer [Expression];
@@ -17,13 +20,16 @@ IdDecl ::= <ID>;
 Nbr : Variable ::= <NUM>;
 
 abstract Term;
+FunctionCall:Variable ::= FunctionIDUse [ArgumentIDUse];
 Sum:Term ::= left:Term right:Term;
 Sub:Term ::= left:Term right:Term;
 
 abstract Lowprio:Term;
+abstract Variable:Lowprio;
 Mul:Lowprio ::= left:Lowprio right:Lowprio;
 Div:Lowprio ::= left:Lowprio right:Lowprio;
 Mod:Lowprio ::= left:Lowprio right:Lowprio;
+Firstprio:Lowprio ::= Term;
 
 ComparisonContainer ::= [Minus] Comparison;
 abstract Comparison;
@@ -35,4 +41,4 @@ LessThanEqual:Comparison ::= left:Term right:Term;
 GreaterThan:Comparison ::= left:Term right:Term;
 GreaterThanEqual:Comparison ::= left:Term right:Term;
 
-abstract Variable:Lowprio;
+
