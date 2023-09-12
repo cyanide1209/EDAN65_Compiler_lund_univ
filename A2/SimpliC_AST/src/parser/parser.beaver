@@ -22,6 +22,7 @@
 %typeof declr = "Declaration";
 %typeof binding = "Binding";
 %typeof if = "If";
+%typeof else = "Else";
 %typeof while = "While";
 %typeof returnstmt = "ReturnState";
 %typeof functioncallstmt = "FunctionCallStmt";
@@ -38,7 +39,6 @@
 %typeof firstprio = "Firstprio";
 
 %typeof compare = "Comparison";
-%typeof comparecont = "ComparisonContainer";
 %typeof equals = "Equals";
 %typeof notequals = "NotEquals";
 %typeof lessthan = "LessThan";
@@ -46,6 +46,7 @@
 %typeof greaterthan = "GreaterThan";
 %typeof greaterthanequal = "GreaterThanEqual";
 %typeof minus = "Minus";
+%typeof hi = "Hi";
 
 %typeof functionID = "FunctionID";
 %typeof functionID_use = "FunctionIDUse";
@@ -72,19 +73,24 @@ argument_list = argument.a {: return new List().add(a); :}
 				| argument_list.a COMMA argument.b {: return a.add(b); :};
 
 
-expr = declr | binding | if | while | returnstmt | functioncallstmt;
+expr = declr | binding | if | while | else | returnstmt | functioncallstmt;
 expr_list = expr.a {: return new List().add(a); :} 
 			| expr_list.a expr.b {: return a.add(b); :};
 declr = INT id_decl.a SEMICOLON {: return new Declaration(a, new Opt()); :} 
-		| INT id_decl.a ASSIGN term.b SEMICOLON{: return new Declaration(a,new Opt(b)); :};
-binding = id_use.a ASSIGN term.b SEMICOLON {: return new Binding(a,b); :};
+		| INT id_decl.a ASSIGN hi.b SEMICOLON{: return new Declaration(a,new Opt(b)); :};
+binding = id_use.a ASSIGN hi.b SEMICOLON {: return new Binding(a,b); :};
 functioncallstmt = functioncall.a SEMICOLON {: return new FunctionCallStmt(a); :};
-if = IF comparecont.a LEFTCURLYBRACE RIGHTCURLYBRACE {: return new If(a,new Opt()); :}
-		| IF comparecont.a LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new If(a,new Opt(b)); :};
-while = WHILE comparecont.a LEFTCURLYBRACE RIGHTCURLYBRACE {: return new While(a,new Opt()); :}
-		| WHILE comparecont.a LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new While(a,new Opt(b)); :};
-returnstmt = RETURN term.a SEMICOLON {: return new ReturnState(a); :};
+if = IF LEFTPARA hi.a RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new If(a,new Opt(),new Opt()); :}
+		| IF LEFTPARA hi.a RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new If(a,new Opt(b),new Opt()); :}
+		| IF LEFTPARA hi.a RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE else.b{:return new If(a,new Opt(),new Opt(b)); :}
+		| IF LEFTPARA hi.a RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE else.c{:return new If(a,new Opt(b),new Opt(c)); :};
+while = WHILE LEFTPARA hi.a RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new While(a,new Opt()); :}
+		| WHILE LEFTPARA hi.a RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new While(a,new Opt(b)); :};
+returnstmt = RETURN hi.a SEMICOLON {: return new ReturnState(a); :};
+else = ELSE LEFTCURLYBRACE RIGHTCURLYBRACE {: return new Else(new Opt()); :}
+		| ELSE LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new Else(new Opt(b)); :};
 
+hi = compare|term;
 term =  sum | sub | lowprio;
 functioncall = functionID_use.a LEFTPARA RIGHTPARA {: return new FunctionCall(a, new Opt()); :}
 				| functionID_use.a LEFTPARA argumentID_uselist.b RIGHTPARA {: return new FunctionCall(a, new Opt(b)); :};
@@ -92,17 +98,15 @@ variable = nbr | id_use | functioncall;
 sum = term.a ADD term.b{:return new Sum(a,b); :};
 sub = term.a MINUS term.b{:return new Sub(a,b); :};
 
-lowprio = variable | mul | div | mod | firstprio;
+lowprio = variable | mul | div | mod | firstprio | minus;
 mul = lowprio.a MUL lowprio.b{:return new Mul(a,b); :};
 div = lowprio.a DIV lowprio.b{:return new Div(a,b); :};
 mod = lowprio.a MOD lowprio.b{:return new Mod(a,b); :};
 
-firstprio = LEFTPARA term.a RIGHTPARA{: return new Firstprio(a); :};
+firstprio = LEFTPARA hi.a RIGHTPARA{: return new Firstprio(a); :};
 
-comparecont = LEFTPARA compare.a RIGHTPARA{:return new ComparisonContainer(new Opt(), a); :} 
-				| minus.a LEFTPARA compare.b RIGHTPARA{:return new ComparisonContainer(new Opt(a), b); :};
+minus = MINUS hi.a {:return new Minus(a); :}; 
 compare = equals | notequals | lessthan | lessthaneqaul | greaterthan | greaterthanequal; 
-minus = MINUS {:return new Minus(); :};
 equals = term.a EQUALS term.b {: return new Equals(a,b); :};
 notequals = term.a NOTEQUALS term.b {: return new NotEquals(a,b); :};
 lessthan = term.a LESSTHAN term.b {: return new LessThan(a,b); :};
@@ -115,7 +119,7 @@ id_use = ID.id {: return new IdUse(id); :} ;
 functionID = ID.id {: return new FunctionID(id); :};
 functionID_use = ID.id {: return new FunctionIDUse(id); :};
 argumentID = ID.id {: return new ArgumentID(id); :};
-argumentID_use = variable.id {: return new ArgumentIDUse(id); :};
+argumentID_use = hi.id {: return new ArgumentIDUse(id); :};
 argumentID_uselist = argumentID_use.a {: return new List().add(a); :}
 					| argumentID_uselist.a COMMA argumentID_use.b {: return a.add(b); :};
 id_decl = ID.id {: return new IdDecl(id); :} ;

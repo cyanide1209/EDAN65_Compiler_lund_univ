@@ -5,40 +5,43 @@ FunctionID ::= <ID>;
 FunctionIDUse ::= <ID>;
 Argument ::= ArgumentID;
 ArgumentID ::= <ID>;
-ArgumentIDUse ::= Variable;
+ArgumentIDUse ::= Hi;
 
 abstract Expression;
-Binding:Expression ::= IdUse Term;
-Declaration:Expression ::= IdDecl [Term];
-ReturnState:Expression ::= Term;
+Binding:Expression ::= IdUse Hi;
+Declaration:Expression ::= IdDecl [Hi];
+ReturnState:Expression ::= Hi;
 FunctionCallStmt:Expression ::= FunctionCall;
-If:Expression ::= ComparisonContainer [Expression];
-IdUse : Variable ::= <ID>;
-While:Expression ::= ComparisonContainer [Expression];
+If:Expression ::= Hi [Expression] [Else];
+Else ::= [Expression];
+While:Expression ::= Hi [Expression];
 
 IdDecl ::= <ID>;
-Nbr : Variable ::= <NUM>;
 
-abstract Term;
-FunctionCall:Variable ::= FunctionIDUse [ArgumentIDUse];
-Sum:Term ::= left:Term right:Term;
-Sub:Term ::= left:Term right:Term;
-
-abstract Lowprio:Term;
-abstract Variable:Lowprio;
-Mul:Lowprio ::= left:Lowprio right:Lowprio;
-Div:Lowprio ::= left:Lowprio right:Lowprio;
-Mod:Lowprio ::= left:Lowprio right:Lowprio;
-Firstprio:Lowprio ::= Term;
-
-ComparisonContainer ::= [Minus] Comparison;
-abstract Comparison;
-Minus;
+abstract Hi;
+abstract Comparison:Hi;
 Equals:Comparison ::= left:Term right:Term;
 NotEquals:Comparison ::= left:Term right:Term;
 LessThan:Comparison ::= left:Term right:Term;
 LessThanEqual:Comparison ::= left:Term right:Term;
 GreaterThan:Comparison ::= left:Term right:Term;
 GreaterThanEqual:Comparison ::= left:Term right:Term;
+
+abstract Term:Hi;
+FunctionCall:Variable ::= FunctionIDUse [ArgumentIDUse];
+Sum:Term ::= left:Term right:Term;
+Sub:Term ::= left:Term right:Term;
+
+abstract Lowprio:Term;
+Mul:Lowprio ::= left:Lowprio right:Lowprio;
+Div:Lowprio ::= left:Lowprio right:Lowprio;
+Mod:Lowprio ::= left:Lowprio right:Lowprio;
+Firstprio:Lowprio ::= Hi;
+Minus:Lowprio ::= Hi;
+
+abstract Variable:Lowprio;
+IdUse : Variable ::= <ID>;
+Nbr : Variable ::= <NUM>;
+
 
 

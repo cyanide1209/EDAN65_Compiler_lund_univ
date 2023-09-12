@@ -62,6 +62,7 @@ COMMENT = "//"~"\n"
 "if"          {return sym(Terminals.IF);}
 "while"       {return sym(Terminals.WHILE);}
 ","           {return sym(Terminals.COMMA);}
+"else"        {return sym(Terminals.ELSE);}
 
 {NUM}         { return sym(Terminals.NUM);}
 
