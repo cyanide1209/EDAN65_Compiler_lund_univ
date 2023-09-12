@@ -6,18 +6,21 @@ FunctionID ::= <ID>;
 abstract Expression;
 Binding:Expression ::= IdUse Term;
 Declaration:Expression ::= IdDecl [Term];
-IdUse : Term ::= <ID>;
+IdUse : Lowprio ::= <ID>;
 IdDecl ::= <ID>;
 
 abstract Term;
 Sum:Term ::= left:Term right:Term;
 Sub:Term ::= left:Term right:Term;
 
-abstract lowprio:Term;
-Mul:lowprio ::= left:Term right:Term;
-Div:lowprio ::= left:Term right:Term;
-Mod:lowprio ::= left:Term right:Term;
+abstract Lowprio:Term;
+Mul:Lowprio ::= left:Lowprio right:Lowprio;
+Div:Lowprio ::= left:Lowprio right:Lowprio;
+Mod:Lowprio ::= left:Lowprio right:Lowprio;
 
-Nbr : Term ::= <NUM>;
+abstract Variable:Lowprio;
+
+Nbr : Lowprio ::= <NUM>;
+
 
 

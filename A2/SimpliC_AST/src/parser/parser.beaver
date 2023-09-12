@@ -22,8 +22,10 @@
 %typeof binding = "Binding";
 
 %typeof term = "Term";
+%typeof variable = "Variable";
 %typeof sum = "Sum";
 %typeof sub = "Sub";
+%typeof lowprio = "Lowprio";
 %typeof id_use = "IdUse";
 %typeof id_decl = "IdDecl";
 %typeof nbr = "Nbr";
@@ -52,14 +54,15 @@ codeblock = LEFTCURLYBRACE RIGHTCURLYBRACE{: return new CodeBlock(); :}
 			| LEFTCURLYBRACE expr_list.a RIGHTCURLYBRACE{: return new CodeBlock(new Opt(a)); :}; 
 
 
-term = nbr | id_use | sum | sub | lowprio;
+term =  sum | sub | lowprio;
+variable = nbr | id_use;
 sum = term.a ADD term.b{:return new Sum(a,b); :};
 sub = term.a MINUS term.b{:return new Sub(a,b); :};
 
-lowprio = mul | div | mod;
-mul = term.a MUL term.b{:return new Mul(a,b); :};
-div = term.a DIV term.b{:return new Div(a,b); :};
-mod = term.a MOD term.b{:return new Mod(a,b); :};
+lowprio = variable | mul | div | mod;
+mul = lowprio.a MUL lowprio.b{:return new Mul(a,b); :};
+div = lowprio.a DIV lowprio.b{:return new Div(a,b); :};
+mod = lowprio.a MOD lowprio.b{:return new Mod(a,b); :};
 
 nbr = NUM.a{: return new Nbr(a); :};
 id_use = ID.id {: return new IdUse(id); :} ;
