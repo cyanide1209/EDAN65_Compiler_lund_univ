@@ -6,6 +6,7 @@ FunctionID ::= <ID>;
 abstract Expression;
 Binding:Expression ::= IdUse Term;
 Declaration:Expression ::= IdDecl [Term];
+ReturnState:Expression ::= Variable;
 IdUse : Lowprio ::= <ID>;
 IdDecl ::= <ID>;
 

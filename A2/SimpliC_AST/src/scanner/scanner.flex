@@ -49,6 +49,7 @@ NUM = [0-9]+
 "*"           {return sym(Terminals.MUL);}
 "/"           {return sym(Terminals.DIV);}
 "%"           {return sym(Terminals.MOD);}
+"return"      {return sym(Terminals.RETURN);}
 
 ">"           {return sym(Terminals.GREATERTHAN);}
 ">="          {return sym(Terminals.GREATERTHANEQUAL);}

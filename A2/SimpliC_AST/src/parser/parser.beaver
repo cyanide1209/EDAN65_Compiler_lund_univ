@@ -9,7 +9,7 @@
 	}
 :};
 
-%terminals ID,LEFTPARA, RIGHTPARA, LEFTCURLYBRACE, RIGHTCURLYBRACE, INT, ASSIGN, SEMICOLON, NUM, ADD, MINUS, DIV, MUL, MOD, GREATERTHAN, GREATERTHANEQUAL, LESSTHAN, LESSTHANEQUAL, EQUALS;
+%terminals ID,LEFTPARA, RIGHTPARA, LEFTCURLYBRACE, RIGHTCURLYBRACE, INT, ASSIGN, SEMICOLON, NUM, ADD, MINUS, DIV, MUL, MOD, GREATERTHAN, GREATERTHANEQUAL, LESSTHAN, LESSTHANEQUAL, EQUALS, RETURN;
 %typeof program = "Program";
 %typeof function = "Function";
 %typeof functionID = "FunctionID";
@@ -19,6 +19,7 @@
 %typeof expr_list = "List";
 %typeof declr = "Declaration";
 %typeof binding = "Binding";
+%typeof returnstmt = "ReturnState";
 
 %typeof term = "Term";
 %typeof variable = "Variable";
@@ -51,6 +52,8 @@ expr_list = expr.a {: return new List().add(a); :}
 
 codeblock = LEFTCURLYBRACE RIGHTCURLYBRACE{: return new CodeBlock(); :}
 			| LEFTCURLYBRACE expr_list.a RIGHTCURLYBRACE{: return new CodeBlock(new Opt(a)); :}; 
+
+returnstmt = RETURN variable SEMICOLON {: return new ReturnState(); :}
 
 term =  sum | sub | lowprio;
 variable = nbr | id_use;
