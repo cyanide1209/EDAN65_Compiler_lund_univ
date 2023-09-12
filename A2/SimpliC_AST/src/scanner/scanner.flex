@@ -60,6 +60,8 @@ COMMENT = "//"~"\n"
 "=="          {return sym(Terminals.EQUALS);}
 "!="          {return sym(Terminals.NOTEQUALS);}
 "if"          {return sym(Terminals.IF);}
+"while"       {return sym(Terminals.WHILE);}
+","           {return sym(Terminals.COMMA);}
 
 {NUM}         { return sym(Terminals.NUM);}
 

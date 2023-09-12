@@ -1,7 +1,9 @@
 Program ::= Function*;
 
-Function ::= FunctionID [Expression];
+Function ::= FunctionID [Argument] [Expression];
 FunctionID ::= <ID>;
+Argument ::= ArgumentID;
+ArgumentID ::= <ID>;
 
 abstract Expression;
 Binding:Expression ::= IdUse Term;
@@ -9,6 +11,8 @@ Declaration:Expression ::= IdDecl [Term];
 ReturnState:Expression ::= Variable;
 If:Expression ::= ComparisonContainer [Expression];
 IdUse : Variable ::= <ID>;
+While:Expression ::= Comparison [Expression];
+
 IdDecl ::= <ID>;
 Nbr : Lowprio ::= <NUM>;
 

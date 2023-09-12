@@ -10,18 +10,21 @@
 :};
 
 %terminals ID,LEFTPARA, RIGHTPARA, LEFTCURLYBRACE, RIGHTCURLYBRACE, INT, ASSIGN, SEMICOLON, NUM, ADD, MINUS, DIV, MUL, MOD;
-%terminals GREATERTHAN, GREATERTHANEQUAL, LESSTHAN, LESSTHANEQUAL, EQUALS, NOTEQUALS, ARGUMENT, RETURN, COMMENT;
+%terminals GREATERTHAN, GREATERTHANEQUAL, LESSTHAN, LESSTHANEQUAL, EQUALS, NOTEQUALS, ARGUMENT, RETURN, COMMENT, WHILE, COMMA;
 %typeof program = "Program";
 %typeof function = "Function";
 %typeof functionID = "FunctionID";
 %typeof function_list = "List";
 %typeof argument = "Argument";
+%typeof argumentID = "ArgumentID";
+%typeof argument_list = "List";
 
 %typeof expr = "Expression";
 %typeof expr_list = "List";
 %typeof declr = "Declaration";
 %typeof binding = "Binding";
 %typeof if = "If";
+%typeof while = "While";
 %typeof returnstmt = "ReturnState";
 
 %typeof term = "Term";
@@ -51,13 +54,18 @@
 %goal program;
 
 program = function_list.a {: return new Program(a); :};
-function = INT functionID.a LEFTPARA RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new Function(a,new Opt()); :}
-			| INT functionID.a LEFTPARA RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new Function(a,new Opt(b)); :};
-
+function = INT functionID.a LEFTPARA RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new Function(a,new Opt(),new Opt()); :}
+			| INT functionID.a LEFTPARA RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new Function(a,new Opt(), new Opt(b)); :}
+			| INT functionID.a LEFTPARA argument_list.b RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new Function(a, new Opt(b), new Opt()); :}
+			| INT functionID.a LEFTPARA argument_list.b RIGHTPARA LEFTCURLYBRACE expr_list.c RIGHTCURLYBRACE {: return new Function(a, new Opt(b), new Opt(c)); :};			
 function_list = function.a {: return new List().add(a); :} 
 				| function_list.a function.b {: return a.add(b); :};
+argument = INT argumentID.a {: return new Argument(a); :}
+			| COMMA INT argumentID.a {: return new Argument(a); :};
+argument_list = argument.a {: return new List<Argument>().add(a); :}
+				| argument_list.a argument.b {: return a.add(b); :};
 
-expr = declr | binding | if | returnstmt;
+expr = declr | binding | if | while | returnstmt;
 expr_list = expr.a {: return new List().add(a); :} 
 			| expr_list.a expr.b {: return a.add(b); :};
 declr = INT id_decl.a SEMICOLON {: return new Declaration(a, new Opt()); :} 
@@ -65,6 +73,9 @@ declr = INT id_decl.a SEMICOLON {: return new Declaration(a, new Opt()); :}
 binding = id_use.a ASSIGN term.b SEMICOLON {: return new Binding(a,b); :};
 if = IF comparecont.a LEFTCURLYBRACE RIGHTCURLYBRACE {: return new If(a,new Opt()); :}
 		| IF comparecont.a LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new If(a,new Opt(b)); :};
+
+while = WHILE LEFTPARA compare.a RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new While(a,new Opt()); :}
+		| WHILE LEFTPARA compare.a RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new While(a,new Opt(b)); :};
 
 returnstmt = RETURN variable.a SEMICOLON {: return new ReturnState(a); :};
 
@@ -91,4 +102,5 @@ greaterthanequal = term.a GREATERTHANEQUAL term.b {: return new GreaterThanEqual
 nbr = NUM.a{: return new Nbr(a); :};
 id_use = ID.id {: return new IdUse(id); :} ;
 functionID = ID.id {: return new FunctionID(id); :};
+argumentID = ID.id {: return new ArgumentID(id); :};
 id_decl = ID.id {: return new IdDecl(id); :} ;

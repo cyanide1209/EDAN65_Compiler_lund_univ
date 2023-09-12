@@ -1,2 +1,2 @@
 int a() { }
-int b() { }
+int b(int x, int y) { }
