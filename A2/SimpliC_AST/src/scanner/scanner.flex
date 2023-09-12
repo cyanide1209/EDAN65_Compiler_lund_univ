@@ -45,6 +45,10 @@ NUM = [0-9]+
 ";"           {return sym(Terminals.SEMICOLON);}
 "="           {return sym(Terminals.ASSIGN);}
 "+"           {return sym(Terminals.ADD);}
+"-"           {return sym(Terminals.MINUS);}
+"*"           {return sym(Terminals.MUL);}
+"/"           {return sym(Terminals.DIV);}
+"%"           {return sym(Terminals.MOD);}
 
 
 {NUM}         { return sym(Terminals.NUM);}

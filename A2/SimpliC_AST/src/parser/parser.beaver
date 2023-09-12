@@ -9,7 +9,7 @@
 	}
 :};
 
-%terminals ID,LEFTPARA, RIGHTPARA, LEFTCURLYBRACE, RIGHTCURLYBRACE, INT, ASSIGN, SEMICOLON, NUM;
+%terminals ID,LEFTPARA, RIGHTPARA, LEFTCURLYBRACE, RIGHTCURLYBRACE, INT, ASSIGN, SEMICOLON, NUM, ADD, MINUS, DIV, MUL, MOD;
 
 %typeof program = "Program";
 %typeof function = "Function";
@@ -23,9 +23,14 @@
 
 %typeof term = "Term";
 %typeof sum = "Sum";
+%typeof sub = "Sub";
 %typeof id_use = "IdUse";
 %typeof id_decl = "IdDecl";
 %typeof nbr = "Nbr";
+
+%typeof div = "Div";
+%typeof mul = "Mul";
+%typeof mod = "Mod";
 
 
 %goal program;
@@ -47,8 +52,14 @@ codeblock = LEFTCURLYBRACE RIGHTCURLYBRACE{: return new CodeBlock(); :}
 			| LEFTCURLYBRACE expr_list.a RIGHTCURLYBRACE{: return new CodeBlock(new Opt(a)); :}; 
 
 
-term = nbr | id_use | sum;
+term = nbr | id_use | sum | sub | lowprio;
 sum = term.a ADD term.b{:return new Sum(a,b); :};
+sub = term.a MINUS term.b{:return new Sub(a,b); :};
+
+lowprio = mul | div | mod;
+mul = term.a MUL term.b{:return new Mul(a,b); :};
+div = term.a DIV term.b{:return new Div(a,b); :};
+mod = term.a MOD term.b{:return new Mod(a,b); :};
 
 nbr = NUM.a{: return new Nbr(a); :};
 id_use = ID.id {: return new IdUse(id); :} ;

@@ -1,0 +1,25 @@
+Program
+  List
+    Function
+      FunctionID ID="a"
+      Opt
+        List
+          Declaration
+            IdDecl ID="x"
+            Opt
+          Declaration
+            IdDecl ID="y"
+            Opt
+          Binding
+            IdUse ID="y"
+            Nbr NUM="5"
+          Binding
+            IdUse ID="x"
+            Sub
+              IdUse ID="y"
+              Nbr NUM="2"
+          Binding
+            IdUse ID="x"
+            Sub
+              IdUse ID="x"
+              Nbr NUM="1"

@@ -11,4 +11,13 @@ IdDecl ::= <ID>;
 
 abstract Term;
 Sum:Term ::= left:Term right:Term;
+Sub:Term ::= left:Term right:Term;
+
+abstract lowprio:Term;
+Mul:lowprio ::= left:Term right:Term;
+Div:lowprio ::= left:Term right:Term;
+Mod:lowprio ::= left:Term right:Term;
+
 Nbr : Term ::= <NUM>;
+
+
