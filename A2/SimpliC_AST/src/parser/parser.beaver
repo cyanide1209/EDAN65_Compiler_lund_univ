@@ -44,6 +44,7 @@
 %typeof lessthaneqaul = "LessThanEqual";
 %typeof greaterthan = "GreaterThan";
 %typeof greaterthanequal = "GreaterThanEqual";
+%typeof minus = "Minus";
 
 %typeof id_use = "IdUse";
 %typeof id_decl = "IdDecl";
@@ -73,10 +74,8 @@ declr = INT id_decl.a SEMICOLON {: return new Declaration(a, new Opt()); :}
 binding = id_use.a ASSIGN term.b SEMICOLON {: return new Binding(a,b); :};
 if = IF comparecont.a LEFTCURLYBRACE RIGHTCURLYBRACE {: return new If(a,new Opt()); :}
 		| IF comparecont.a LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new If(a,new Opt(b)); :};
-
 while = WHILE comparecont.a LEFTCURLYBRACE RIGHTCURLYBRACE {: return new While(a,new Opt()); :}
 		| WHILE comparecont.a LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new While(a,new Opt(b)); :};
-
 returnstmt = RETURN variable.a SEMICOLON {: return new ReturnState(a); :};
 
 term =  sum | sub | lowprio;
@@ -89,8 +88,10 @@ mul = lowprio.a MUL lowprio.b{:return new Mul(a,b); :};
 div = lowprio.a DIV lowprio.b{:return new Div(a,b); :};
 mod = lowprio.a MOD lowprio.b{:return new Mod(a,b); :};
 
-comparecont = LEFTPARA compare.a RIGHTPARA{:return new ComparisonContainer(a); :} | MINUS LEFTPARA compare.a RIGHTPARA{:return new ComparisonContainer(a); :};
+comparecont = LEFTPARA compare.a RIGHTPARA{:return new ComparisonContainer(new Opt(), a); :} 
+				| minus.a LEFTPARA compare.b RIGHTPARA{:return new ComparisonContainer(new Opt(a), b); :};
 compare = equals | notequals | lessthan | lessthaneqaul | greaterthan | greaterthanequal; 
+minus = MINUS {:return new Minus(); :};
 equals = term.a EQUALS term.b {: return new Equals(a,b); :};
 notequals = term.a NOTEQUALS term.b {: return new NotEquals(a,b); :};
 lessthan = term.a LESSTHAN term.b {: return new LessThan(a,b); :};

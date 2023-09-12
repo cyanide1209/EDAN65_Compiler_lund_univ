@@ -25,8 +25,9 @@ Mul:Lowprio ::= left:Lowprio right:Lowprio;
 Div:Lowprio ::= left:Lowprio right:Lowprio;
 Mod:Lowprio ::= left:Lowprio right:Lowprio;
 
-ComparisonContainer ::= Comparison;
+ComparisonContainer ::= [Minus] Comparison;
 abstract Comparison;
+Minus;
 Equals:Comparison ::= left:Term right:Term;
 NotEquals:Comparison ::= left:Term right:Term;
 LessThan:Comparison ::= left:Term right:Term;
