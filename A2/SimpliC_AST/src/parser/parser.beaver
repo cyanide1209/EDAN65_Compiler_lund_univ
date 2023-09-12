@@ -9,7 +9,8 @@
 	}
 :};
 
-%terminals ID,LEFTPARA,ARGUMENT, RIGHTPARA, LEFTCURLYBRACE, RIGHTCURLYBRACE, INT, ASSIGN, SEMICOLON, NUM, ADD, MINUS, DIV, MUL, MOD, GREATERTHAN, GREATERTHANEQUAL, LESSTHAN, LESSTHANEQUAL, EQUALS, RETURN;
+%terminals ID,LEFTPARA, RIGHTPARA, LEFTCURLYBRACE, RIGHTCURLYBRACE, INT, ASSIGN, SEMICOLON, NUM, ADD, MINUS, DIV, MUL, MOD;
+%terminals GREATERTHAN, GREATERTHANEQUAL, LESSTHAN, LESSTHANEQUAL, EQUALS, NOTEQUALS, ARGUMENT, RETURN;
 %typeof program = "Program";
 %typeof function = "Function";
 %typeof functionID = "FunctionID";
@@ -20,6 +21,7 @@
 %typeof expr_list = "List";
 %typeof declr = "Declaration";
 %typeof binding = "Binding";
+%typeof if = "If";
 %typeof returnstmt = "ReturnState";
 
 %typeof term = "Term";
@@ -27,34 +29,41 @@
 %typeof sum = "Sum";
 %typeof sub = "Sub";
 %typeof lowprio = "Lowprio";
+%typeof div = "Div";
+%typeof mul = "Mul";
+%typeof mod = "Mod";
+
+%typeof compare = "Comparison";
+%typeof equals = "Equals";
+%typeof notequals = "NotEquals";
+%typeof lessthan = "LessThan";
+%typeof lessthaneqaul = "LessThanEqual";
+%typeof greaterthan = "GreaterThan";
+%typeof greaterthanequal = "GreaterThanEqual";
+
 %typeof id_use = "IdUse";
 %typeof id_decl = "IdDecl";
 %typeof nbr = "Nbr";
 
-%typeof div = "Div";
-%typeof mul = "Mul";
-%typeof mod = "Mod";
 
 
 %goal program;
 
 program = function_list.a {: return new Program(a); :};
 function = INT functionID.a LEFTPARA RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new Function(a,new Opt()); :}
-			| INT functionID.a LEFTPARA RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new Function(a,new Opt(b)); :}
-			| INT functionID.a LEFTPARA argument.c RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new Function(a,new Opt(),c); :}
-			| INT functionID.a LEFTPARA argument.c RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new Function(a,new Opt(b),c); :};;
+			| INT functionID.a LEFTPARA RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new Function(a,new Opt(b)); :};
 
 function_list = function.a {: return new List().add(a); :} 
 				| function_list.a function.b {: return a.add(b); :};
+
+expr = declr | binding | if;
+expr_list = expr.a {: return new List().add(a); :} 
+			| expr_list.a expr.b {: return a.add(b); :};
 declr = INT id_decl.a SEMICOLON {: return new Declaration(a, new Opt()); :} 
 		| INT id_decl.a ASSIGN term.b SEMICOLON{: return new Declaration(a,new Opt(b)); :};
 binding = id_use.a ASSIGN term.b SEMICOLON {: return new Binding(a,b); :};
-expr = declr | binding;
-expr_list = expr.a {: return new List().add(a); :} 
-			| expr_list.a expr.b {: return a.add(b); :};
-
-codeblock = LEFTCURLYBRACE RIGHTCURLYBRACE{: return new CodeBlock(); :}
-			| LEFTCURLYBRACE expr_list.a RIGHTCURLYBRACE{: return new CodeBlock(new Opt(a)); :}; 
+if = IF LEFTPARA compare.a RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new If(a,new Opt()); :}
+		| IF LEFTPARA compare.a RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new If(a,new Opt(b)); :};
 
 returnstmt = RETURN variable SEMICOLON {: return new ReturnState(); :}
 
@@ -67,6 +76,15 @@ lowprio = variable | mul | div | mod;
 mul = lowprio.a MUL lowprio.b{:return new Mul(a,b); :};
 div = lowprio.a DIV lowprio.b{:return new Div(a,b); :};
 mod = lowprio.a MOD lowprio.b{:return new Mod(a,b); :};
+
+compare = equals | notequals | lessthan | lessthaneqaul | greaterthan | greaterthanequal; 
+equals = term.a EQUALS term.b {: return new Equals(a,b); :};
+notequals = term.a NOTEQUALS term.b {: return new NotEquals(a,b); :};
+lessthan = term.a LESSTHAN term.b {: return new LessThan(a,b); :};
+lessthaneqaul = term.a LESSTHANEQUAL term.b {: return new LessThanEqual(a,b); :};
+greaterthan = term.a GREATERTHAN term.b {: return new GreaterThan(a,b); :};
+greaterthanequal = term.a GREATERTHANEQUAL term.b {: return new GreaterThanEqual(a,b); :};
+
 
 nbr = NUM.a{: return new Nbr(a); :};
 id_use = ID.id {: return new IdUse(id); :} ;

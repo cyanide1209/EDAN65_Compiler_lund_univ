@@ -55,7 +55,9 @@ NUM = [0-9]+
 ">="          {return sym(Terminals.GREATERTHANEQUAL);}
 "<"           {return sym(Terminals.LESSTHAN);}
 "<="          {return sym(Terminals.LESSTHANEQUAL);}
-"=="          {return sym(Terminals.EQUALS)}
+"=="          {return sym(Terminals.EQUALS);}
+"!="          {return sym(Terminals.NOTEQUALS);}
+"if"          {return sym(Terminals.IF);}
 
 {NUM}         { return sym(Terminals.NUM);}
 
