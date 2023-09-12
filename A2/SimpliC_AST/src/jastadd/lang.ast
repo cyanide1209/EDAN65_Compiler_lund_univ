@@ -32,9 +32,3 @@ GreaterThanEqual:Comparison ::= left:Term right:Term;
 abstract Variable:Lowprio;
 
 abstract Argument:Variable;
-
-Nbr : Lowprio ::= <NUM>;
-
-
-
-

@@ -65,7 +65,7 @@ binding = id_use.a ASSIGN term.b SEMICOLON {: return new Binding(a,b); :};
 if = IF LEFTPARA compare.a RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new If(a,new Opt()); :}
 		| IF LEFTPARA compare.a RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new If(a,new Opt(b)); :};
 
-returnstmt = RETURN variable SEMICOLON {: return new ReturnState(); :}
+returnstmt = RETURN variable SEMICOLON {: return new ReturnState(); :};
 
 term =  sum | sub | lowprio;
 variable = nbr | id_use;
