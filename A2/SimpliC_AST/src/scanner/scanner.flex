@@ -50,6 +50,11 @@ NUM = [0-9]+
 "/"           {return sym(Terminals.DIV);}
 "%"           {return sym(Terminals.MOD);}
 
+">"           {return sym(Terminals.GREATERTHAN);}
+">="          {return sym(Terminals.GREATERTHANEQUAL);}
+"<"           {return sym(Terminals.LESSTHAN);}
+"<="          {return sym(Terminals.LESSTHANEQUAL);}
+"=="          {return sym(Terminals.EQUALS)}
 
 {NUM}         { return sym(Terminals.NUM);}
 

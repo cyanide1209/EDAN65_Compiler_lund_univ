@@ -9,8 +9,7 @@
 	}
 :};
 
-%terminals ID,LEFTPARA, RIGHTPARA, LEFTCURLYBRACE, RIGHTCURLYBRACE, INT, ASSIGN, SEMICOLON, NUM, ADD, MINUS, DIV, MUL, MOD;
-
+%terminals ID,LEFTPARA, RIGHTPARA, LEFTCURLYBRACE, RIGHTCURLYBRACE, INT, ASSIGN, SEMICOLON, NUM, ADD, MINUS, DIV, MUL, MOD, GREATERTHAN, GREATERTHANEQUAL, LESSTHAN, LESSTHANEQUAL, EQUALS;
 %typeof program = "Program";
 %typeof function = "Function";
 %typeof functionID = "FunctionID";
@@ -52,7 +51,6 @@ expr_list = expr.a {: return new List().add(a); :}
 
 codeblock = LEFTCURLYBRACE RIGHTCURLYBRACE{: return new CodeBlock(); :}
 			| LEFTCURLYBRACE expr_list.a RIGHTCURLYBRACE{: return new CodeBlock(new Opt(a)); :}; 
-
 
 term =  sum | sub | lowprio;
 variable = nbr | id_use;
