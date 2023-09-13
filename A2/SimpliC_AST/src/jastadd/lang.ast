@@ -1,47 +1,30 @@
 Program ::= Function*;
 
-Function ::= FunctionID [Argument] [Expression];
-FunctionID ::= <ID>;
-FunctionIDUse ::= <ID>;
-Argument ::= ArgumentID;
-ArgumentID ::= <ID>;
-ArgumentIDUse ::= Hi;
+Function ::= IdDecl Argument* Statement*;
+Argument ::= IdDecl;
 
-abstract Expression;
-Binding:Expression ::= IdUse Hi;
-Declaration:Expression ::= IdDecl [Hi];
-ReturnState:Expression ::= Hi;
-FunctionCallStmt:Expression ::= FunctionCall;
-If:Expression ::= Hi [Expression] [Else];
-Else ::= [Expression];
-While:Expression ::= Hi [Expression];
+
+abstract Statement;
+Binding:Statement ::= IdUse Expression;
+Declaration:Statement ::= IdDecl [Expression];
+ReturnState:Statement ::= Expression;
+FunctionCallStmt:Statement ::= FunctionCall;
+If:Statement ::= Expression Statement* [Else];
+Else ::= Statement*;
+While:Statement ::= Expression Statement*;
 
 IdDecl ::= <ID>;
 
-abstract Hi;
-abstract Comparison:Hi;
-Equals:Comparison ::= left:Term right:Term;
-NotEquals:Comparison ::= left:Term right:Term;
-LessThan:Comparison ::= left:Term right:Term;
-LessThanEqual:Comparison ::= left:Term right:Term;
-GreaterThan:Comparison ::= left:Term right:Term;
-GreaterThanEqual:Comparison ::= left:Term right:Term;
+abstract Expression;
+Comparison:Expression ::= left:Term right:Term;
 
-abstract Term:Hi;
-FunctionCall:Variable ::= FunctionIDUse [ArgumentIDUse];
-Sum:Term ::= left:Term right:Term;
-Sub:Term ::= left:Term right:Term;
-
-abstract Lowprio:Term;
-Mul:Lowprio ::= left:Lowprio right:Lowprio;
-Div:Lowprio ::= left:Lowprio right:Lowprio;
-Mod:Lowprio ::= left:Lowprio right:Lowprio;
-Firstprio:Lowprio ::= Hi;
-Minus:Lowprio ::= Hi;
-
-abstract Variable:Lowprio;
-IdUse : Variable ::= <ID>;
-Nbr : Variable ::= <NUM>;
+abstract Term:Expression;
+binaryExpression:Term ::= left:Term right:Term;
+FunctionCall:Term ::= name:IdUse argumentList:IdUse*;
+Minus:Term ::= Firstprio;
+Firstprio:Term ::= Expression;
+IdUse:Term ::= <ID>;
+Nbr:Term ::= <NUM>;
 
 
 

@@ -68,8 +68,6 @@ COMMENT = "//"~"\n"
 
 {ID}          { return sym(Terminals.ID); }
 
-{COMMENT}     { return sym(Terminals.COMMENT);}
-
 <<EOF>>       { return sym(Terminals.EOF); }
 
 /* error fallback */

@@ -9,16 +9,21 @@
 	}
 :};
 
-%terminals ID,LEFTPARA, RIGHTPARA, LEFTCURLYBRACE, RIGHTCURLYBRACE, INT, ASSIGN, SEMICOLON, NUM, ADD, MINUS, DIV, MUL, MOD;
-%terminals GREATERTHAN, GREATERTHANEQUAL, LESSTHAN, LESSTHANEQUAL, EQUALS, NOTEQUALS, ARGUMENT, RETURN, COMMENT, WHILE, COMMA;
+%terminals ID,LEFTPARA, RIGHTPARA, LEFTCURLYBRACE, RIGHTCURLYBRACE, INT, ASSIGN, SEMICOLON, NUM, ADD, MINUS, DIV, MUL, MOD, IF, ELSE;
+%terminals GREATERTHAN, GREATERTHANEQUAL, LESSTHAN, LESSTHANEQUAL, EQUALS, NOTEQUALS, RETURN, WHILE, COMMA;
 %typeof program = "Program";
 %typeof function = "Function";
 %typeof function_list = "List";
+%typeof function_list_empty = "List";
+%typeof argument_list_empty = "List";
 %typeof argument = "Argument";
 %typeof argument_list = "List";
+%typeof binaryexpr = "binaryExpression";
+%typeof binaryexprlowprio = "binaryExpression";
 
-%typeof expr = "Expression";
-%typeof expr_list = "List";
+%typeof stmt = "Statement";
+%typeof stmt_list_empty = "List";
+%typeof stmt_list = "List";
 %typeof declr = "Declaration";
 %typeof binding = "Binding";
 %typeof if = "If";
@@ -28,31 +33,28 @@
 %typeof functioncallstmt = "FunctionCallStmt";
 
 %typeof term = "Term";
-%typeof variable = "Variable";
+%typeof variable = "Firstprio";
 %typeof functioncall = "FunctionCall";
-%typeof sum = "Sum";
-%typeof sub = "Sub";
-%typeof lowprio = "Lowprio";
-%typeof div = "Div";
-%typeof mul = "Mul";
-%typeof mod = "Mod";
+%typeof sum = "Term";
+%typeof sub = "Term";
+%typeof lowprio = "Term";
+%typeof div = "Term";
+%typeof mul = "Term";
+%typeof mod = "Term";
 %typeof firstprio = "Firstprio";
 
 %typeof compare = "Comparison";
-%typeof equals = "Equals";
-%typeof notequals = "NotEquals";
-%typeof lessthan = "LessThan";
-%typeof lessthaneqaul = "LessThanEqual";
-%typeof greaterthan = "GreaterThan";
-%typeof greaterthanequal = "GreaterThanEqual";
+%typeof equals = "Comparison";
+%typeof notequals = "Comparison";
+%typeof lessthan = "Comparison";
+%typeof lessthaneqaul = "Comparison";
+%typeof greaterthan = "Comparison";
+%typeof greaterthanequal = "Comparison";
 %typeof minus = "Minus";
-%typeof hi = "Hi";
+%typeof expr= "Expression";
 
-%typeof functionID = "FunctionID";
-%typeof functionID_use = "FunctionIDUse";
-%typeof argumentID = "ArgumentID";
-%typeof argumentID_use = "ArgumentIDUse";
-%typeof argumentID_uselist = "List";
+%typeof id_uselist_empty = "List";
+%typeof id_uselist = "List";
 %typeof id_use = "IdUse";
 %typeof id_decl = "IdDecl";
 %typeof nbr = "Nbr";
@@ -61,65 +63,60 @@
 
 %goal program;
 
-program = function_list.a {: return new Program(a); :};
-function = INT functionID.a LEFTPARA RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new Function(a,new Opt(),new Opt()); :}
-			| INT functionID.a LEFTPARA RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new Function(a,new Opt(), new Opt(b)); :}
-			| INT functionID.a LEFTPARA argument_list.b RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new Function(a, new Opt(b), new Opt()); :}
-			| INT functionID.a LEFTPARA argument_list.b RIGHTPARA LEFTCURLYBRACE expr_list.c RIGHTCURLYBRACE {: return new Function(a, new Opt(b), new Opt(c)); :};			
+program = function_list_empty.a {: return new Program(a); :};
+function = INT id_decl.a LEFTPARA argument_list_empty.b RIGHTPARA LEFTCURLYBRACE stmt_list_empty.c RIGHTCURLYBRACE {: return new Function(a,b,c); :};			
+function_list_empty = {: return new List(); :}| function_list;
 function_list = function.a {: return new List().add(a); :} 
 				| function_list.a function.b {: return a.add(b); :};
-argument = INT argumentID.a {: return new Argument(a); :};
+argument_list_empty = {: return new List(); :}| argument_list;				
+argument = INT id_decl.a {: return new Argument(a); :};
 argument_list = argument.a {: return new List().add(a); :}
 				| argument_list.a COMMA argument.b {: return a.add(b); :};
 
 
-expr = declr | binding | if | while | else | returnstmt | functioncallstmt;
-expr_list = expr.a {: return new List().add(a); :} 
-			| expr_list.a expr.b {: return a.add(b); :};
+stmt = declr | binding | if | while | returnstmt | functioncallstmt;
+stmt_list_empty = {: return new List(); :}| stmt_list;
+stmt_list = stmt.a {: return new List().add(a); :} 
+			| stmt_list.a stmt.b {: return a.add(b); :};
 declr = INT id_decl.a SEMICOLON {: return new Declaration(a, new Opt()); :} 
-		| INT id_decl.a ASSIGN hi.b SEMICOLON{: return new Declaration(a,new Opt(b)); :};
-binding = id_use.a ASSIGN hi.b SEMICOLON {: return new Binding(a,b); :};
+		| INT id_decl.a ASSIGN expr.b SEMICOLON{: return new Declaration(a,new Opt(b)); :};
+binding = id_use.a ASSIGN expr.b SEMICOLON {: return new Binding(a,b); :};
 functioncallstmt = functioncall.a SEMICOLON {: return new FunctionCallStmt(a); :};
-if = IF LEFTPARA hi.a RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new If(a,new Opt(),new Opt()); :}
-		| IF LEFTPARA hi.a RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new If(a,new Opt(b),new Opt()); :}
-		| IF LEFTPARA hi.a RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE else.b{:return new If(a,new Opt(),new Opt(b)); :}
-		| IF LEFTPARA hi.a RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE else.c{:return new If(a,new Opt(b),new Opt(c)); :};
-while = WHILE LEFTPARA hi.a RIGHTPARA LEFTCURLYBRACE RIGHTCURLYBRACE {: return new While(a,new Opt()); :}
-		| WHILE LEFTPARA hi.a RIGHTPARA LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new While(a,new Opt(b)); :};
-returnstmt = RETURN hi.a SEMICOLON {: return new ReturnState(a); :};
-else = ELSE LEFTCURLYBRACE RIGHTCURLYBRACE {: return new Else(new Opt()); :}
-		| ELSE LEFTCURLYBRACE expr_list.b RIGHTCURLYBRACE {: return new Else(new Opt(b)); :};
+if =IF LEFTPARA expr.a RIGHTPARA LEFTCURLYBRACE stmt_list_empty.b RIGHTCURLYBRACE {: return new If(a, b,new Opt()); :}
+		| IF LEFTPARA expr.a RIGHTPARA LEFTCURLYBRACE stmt_list_empty.b RIGHTCURLYBRACE else.c{:return new If(a,b,new Opt(c)); :};
+while = WHILE LEFTPARA expr.a RIGHTPARA LEFTCURLYBRACE stmt_list_empty.b RIGHTCURLYBRACE {: return new While(a, b); :};
+returnstmt = RETURN expr.a SEMICOLON {: return new ReturnState(a); :};
+else = ELSE LEFTCURLYBRACE stmt_list_empty.b RIGHTCURLYBRACE {: return new Else(b); :};
 
-hi = compare|term;
-term =  sum | sub | lowprio;
-functioncall = functionID_use.a LEFTPARA RIGHTPARA {: return new FunctionCall(a, new Opt()); :}
-				| functionID_use.a LEFTPARA argumentID_uselist.b RIGHTPARA {: return new FunctionCall(a, new Opt(b)); :};
+expr= compare|term;
+term =  lowprio | binaryexpr;
+binaryexpr = sum|sub;
+binaryexprlowprio = mul | div | mod;
+functioncall = id_use.a LEFTPARA id_uselist_empty.b RIGHTPARA {: return new FunctionCall(a, b); :};
 variable = nbr | id_use | functioncall;
-sum = term.a ADD term.b{:return new Sum(a,b); :};
-sub = term.a MINUS term.b{:return new Sub(a,b); :};
+sum = term.a ADD lowprio.b{:return new binaryExpression(a,b); :};
+sub = term.a MINUS lowprio.b{:return new binaryExpression(a,b); :};
 
-lowprio = variable | mul | div | mod | firstprio | minus;
-mul = lowprio.a MUL lowprio.b{:return new Mul(a,b); :};
-div = lowprio.a DIV lowprio.b{:return new Div(a,b); :};
-mod = lowprio.a MOD lowprio.b{:return new Mod(a,b); :};
+lowprio = firstprio;
+mul = lowprio.a MUL firstprio.b{:return new binaryExpression(a,b); :};
+div = lowprio.a DIV firstprio.b{:return new binaryExpression(a,b); :};
+mod = lowprio.a MOD firstprio.b{:return new binaryExpression(a,b); :};
 
-firstprio = LEFTPARA hi.a RIGHTPARA{: return new Firstprio(a); :};
+firstprio = LEFTPARA expr.a RIGHTPARA{: return new Firstprio(a); :}
+			| variable | minus;
+minus = MINUS firstprio.a {:return new Minus(a); :};
 
-minus = MINUS hi.a {:return new Minus(a); :}; 
 compare = equals | notequals | lessthan | lessthaneqaul | greaterthan | greaterthanequal; 
-equals = term.a EQUALS term.b {: return new Equals(a,b); :};
-notequals = term.a NOTEQUALS term.b {: return new NotEquals(a,b); :};
-lessthan = term.a LESSTHAN term.b {: return new LessThan(a,b); :};
-lessthaneqaul = term.a LESSTHANEQUAL term.b {: return new LessThanEqual(a,b); :};
-greaterthan = term.a GREATERTHAN term.b {: return new GreaterThan(a,b); :};
-greaterthanequal = term.a GREATERTHANEQUAL term.b {: return new GreaterThanEqual(a,b); :};
+equals = term.a EQUALS term.b {: return new Comparison(a,b); :};
+notequals = term.a NOTEQUALS term.b {: return new Comparison(a,b); :};
+lessthan = term.a LESSTHAN term.b {: return new Comparison(a,b); :};
+lessthaneqaul = term.a LESSTHANEQUAL term.b {: return new Comparison(a,b); :};
+greaterthan = term.a GREATERTHAN term.b {: return new Comparison(a,b); :};
+greaterthanequal = term.a GREATERTHANEQUAL term.b {: return new Comparison(a,b); :};
 
 nbr = NUM.a{: return new Nbr(a); :};
-id_use = ID.id {: return new IdUse(id); :} ;
-functionID = ID.id {: return new FunctionID(id); :};
-functionID_use = ID.id {: return new FunctionIDUse(id); :};
-argumentID = ID.id {: return new ArgumentID(id); :};
-argumentID_use = hi.id {: return new ArgumentIDUse(id); :};
-argumentID_uselist = argumentID_use.a {: return new List().add(a); :}
-					| argumentID_uselist.a COMMA argumentID_use.b {: return a.add(b); :};
+id_use = ID.a {: return new IdUse(a); :} ;
+id_uselist_empty = {: return new List(); :}| id_uselist;
+id_uselist = id_use.a {: return new List().add(a); :}
+					| id_uselist.a COMMA id_use.b {: return a.add(b); :};
 id_decl = ID.id {: return new IdDecl(id); :} ;
