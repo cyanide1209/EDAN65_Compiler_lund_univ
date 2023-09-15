@@ -35,12 +35,13 @@
 %typeof term = "Term";
 %typeof variable = "Firstprio";
 %typeof functioncall = "FunctionCall";
-%typeof sum = "Term";
-%typeof sub = "Term";
+%typeof sum = "binaryExpression";
+%typeof sub = "binaryExpression";
 %typeof lowprio = "Term";
-%typeof div = "Term";
-%typeof mul = "Term";
-%typeof mod = "Term";
+%typeof div = "binaryExpression";
+%typeof mul = "binaryExpression";
+%typeof mod = "binaryExpression";
+%typeof parenthesis = "Parenthesis";
 %typeof firstprio = "Firstprio";
 
 %typeof compare = "Comparison";
@@ -53,8 +54,8 @@
 %typeof minus = "Minus";
 %typeof expr= "Expression";
 
-%typeof id_uselist_empty = "List";
-%typeof id_uselist = "List";
+%typeof term_empty = "List";
+%typeof term_list = "List";
 %typeof id_use = "IdUse";
 %typeof id_decl = "IdDecl";
 %typeof nbr = "Nbr";
@@ -89,22 +90,21 @@ returnstmt = RETURN expr.a SEMICOLON {: return new ReturnState(a); :};
 else = ELSE LEFTCURLYBRACE stmt_list_empty.b RIGHTCURLYBRACE {: return new Else(b); :};
 
 expr= compare|term;
-term =  lowprio | binaryexpr;
+term =  binaryexpr|lowprio;
 binaryexpr = sum|sub;
-binaryexprlowprio = mul | div | mod;
-functioncall = id_use.a LEFTPARA id_uselist_empty.b RIGHTPARA {: return new FunctionCall(a, b); :};
-variable = nbr | id_use | functioncall;
+functioncall = id_use.a LEFTPARA term_empty.b RIGHTPARA {: return new FunctionCall(a, b); :};
 sum = term.a ADD lowprio.b{:return new binaryExpression(a,b); :};
 sub = term.a MINUS lowprio.b{:return new binaryExpression(a,b); :};
 
-lowprio = firstprio;
+lowprio = firstprio|mul|mod|div;
 mul = lowprio.a MUL firstprio.b{:return new binaryExpression(a,b); :};
 div = lowprio.a DIV firstprio.b{:return new binaryExpression(a,b); :};
 mod = lowprio.a MOD firstprio.b{:return new binaryExpression(a,b); :};
 
-firstprio = LEFTPARA expr.a RIGHTPARA{: return new Firstprio(a); :}
-			| variable | minus;
-minus = MINUS firstprio.a {:return new Minus(a); :};
+parenthesis = LEFTPARA expr.a RIGHTPARA{: return new Parenthesis(a); :};
+firstprio = parenthesis | variable | minus;
+variable = nbr | id_use | functioncall;
+minus = MINUS firstprio.a {: return new Minus(a); :};
 
 compare = equals | notequals | lessthan | lessthaneqaul | greaterthan | greaterthanequal; 
 equals = term.a EQUALS term.b {: return new Comparison(a,b); :};
@@ -116,7 +116,7 @@ greaterthanequal = term.a GREATERTHANEQUAL term.b {: return new Comparison(a,b);
 
 nbr = NUM.a{: return new Nbr(a); :};
 id_use = ID.a {: return new IdUse(a); :} ;
-id_uselist_empty = {: return new List(); :}| id_uselist;
-id_uselist = id_use.a {: return new List().add(a); :}
-					| id_uselist.a COMMA id_use.b {: return a.add(b); :};
+term_empty = {: return new List(); :}| term_list;
+term_list = term.a {: return new List().add(a); :}
+					| term_list.a COMMA term.b {: return a.add(b); :};
 id_decl = ID.id {: return new IdDecl(id); :} ;

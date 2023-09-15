@@ -20,11 +20,13 @@ Comparison:Expression ::= left:Term right:Term;
 
 abstract Term:Expression;
 binaryExpression:Term ::= left:Term right:Term;
-FunctionCall:Term ::= name:IdUse argumentList:IdUse*;
-Minus:Term ::= Firstprio;
-Firstprio:Term ::= Expression;
-IdUse:Term ::= <ID>;
-Nbr:Term ::= <NUM>;
+
+abstract Firstprio:Term;
+FunctionCall:Firstprio ::= IdUse Term*;
+Minus:Firstprio ::= Firstprio;
+Parenthesis:Firstprio ::= Expression;
+IdUse:Firstprio ::= <ID>;
+Nbr:Firstprio ::= <NUM>;
 
 
 
