@@ -17,9 +17,20 @@ IdDecl ::= <ID>;
 
 abstract Expression;
 Comparison:Expression ::= left:Term right:Term;
+LessThan:Comparison;
+LessThanEqual:Comparison;
+GreaterThan:Comparison;
+GreaterThanEqual:Comparison;
+Equals:Comparison;
+NotEquals:Comparison;
 
 abstract Term:Expression;
 binaryExpression:Term ::= left:Term right:Term;
+Sum:binaryExpression;
+Sub:binaryExpression;
+Mul:binaryExpression;
+Div:binaryExpression;
+Mod:binaryExpression;
 
 abstract Firstprio:Term;
 FunctionCall:Firstprio ::= IdUse Term*;

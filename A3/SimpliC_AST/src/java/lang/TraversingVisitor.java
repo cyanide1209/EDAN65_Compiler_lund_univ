@@ -1,5 +1,7 @@
 package lang;
 
+import javax.swing.plaf.multi.MultiButtonUI;
+
 import lang.ast.*;
 
 /**
@@ -55,10 +57,37 @@ public abstract class TraversingVisitor implements lang.ast.Visitor {
     public Object visit(IdDecl node, Object data) {
 		return visitChildren(node, data);
 	}
-	public Object visit(Comparison node, Object data) {
+	public Object visit(LessThan node, Object data) {
 		return visitChildren(node, data);
 	}
-	public Object visit(binaryExpression node, Object data) {
+    public Object visit(LessThanEqual node, Object data) {
+		return visitChildren(node, data);
+	}
+	public Object visit(GreaterThan node, Object data) {
+		return visitChildren(node, data);
+	}
+    public Object visit(GreaterThanEqual node, Object data) {
+		return visitChildren(node, data);
+	}
+    public Object visit(Equals node, Object data) {
+		return visitChildren(node, data);
+	}
+    public Object visit(NotEquals node, Object data) {
+		return visitChildren(node, data);
+	}
+    public Object visit(Sum node, Object data) {
+		return visitChildren(node, data);
+	}
+    public Object visit(Sub node, Object data) {
+		return visitChildren(node, data);
+	}
+    public Object visit(Mul node, Object data) {
+		return visitChildren(node, data);
+	}
+    public Object visit(Div node, Object data) {
+		return visitChildren(node, data);
+	}
+    public Object visit(Mod node, Object data) {
 		return visitChildren(node, data);
 	}
     public Object visit(FunctionCall node, Object data) {

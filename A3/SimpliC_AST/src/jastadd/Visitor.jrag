@@ -17,8 +17,17 @@ aspect Visitor {
         public Object visit(Else node, Object data);
         public Object visit(While node, Object data);
         public Object visit(IdDecl node, Object data);
-        public Object visit(Comparison node, Object data);
-        public Object visit(binaryExpression node, Object data);
+        public Object visit(LessThan node, Object data);
+        public Object visit(LessThanEqual node, Object data);
+        public Object visit(GreaterThan node, Object data);
+        public Object visit(GreaterThanEqual node, Object data);
+        public Object visit(Equals node, Object data);
+        public Object visit(NotEquals node, Object data);
+        public Object visit(Sum node, Object data);
+        public Object visit(Sub node, Object data);
+        public Object visit(Mul node, Object data);
+        public Object visit(Mod node, Object data);
+        public Object visit(Div node, Object data);
         public Object visit(FunctionCall node, Object data);
         public Object visit(Minus node, Object data);
         public Object visit(Parenthesis node, Object data);
@@ -68,10 +77,37 @@ aspect Visitor {
     public Object IdDecl.accept(Visitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
-    public Object Comparison.accept(Visitor visitor, Object data) {
+    public Object LessThan.accept(Visitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
-    public Object binaryExpression.accept(Visitor visitor, Object data) {
+    public Object LessThanEqual.accept(Visitor visitor, Object data) {
+		return visitor.visit(this, data);
+	}
+    public Object GreaterThan.accept(Visitor visitor, Object data) {
+		return visitor.visit(this, data);
+	}
+    public Object GreaterThanEqual.accept(Visitor visitor, Object data) {
+		return visitor.visit(this, data);
+	}
+    public Object Equals.accept(Visitor visitor, Object data) {
+		return visitor.visit(this, data);
+	}
+    public Object NotEquals.accept(Visitor visitor, Object data) {
+		return visitor.visit(this, data);
+	}
+    public Object Sum.accept(Visitor visitor, Object data) {
+		return visitor.visit(this, data);
+	}
+    public Object Sub.accept(Visitor visitor, Object data) {
+		return visitor.visit(this, data);
+	}
+    public Object Mul.accept(Visitor visitor, Object data) {
+		return visitor.visit(this, data);
+	}
+    public Object Div.accept(Visitor visitor, Object data) {
+		return visitor.visit(this, data);
+	}
+    public Object Mod.accept(Visitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
     public Object FunctionCall.accept(Visitor visitor, Object data) {

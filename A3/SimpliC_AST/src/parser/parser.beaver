@@ -93,13 +93,13 @@ expr= compare|term;
 term =  binaryexpr|lowprio;
 binaryexpr = sum|sub;
 functioncall = id_use.a LEFTPARA term_empty.b RIGHTPARA {: return new FunctionCall(a, b); :};
-sum = term.a ADD lowprio.b{:return new binaryExpression(a,b); :};
-sub = term.a MINUS lowprio.b{:return new binaryExpression(a,b); :};
+sum = term.a ADD lowprio.b{:return new Sum(a,b); :};
+sub = term.a MINUS lowprio.b{:return new Sub(a,b); :};
 
 lowprio = firstprio|mul|mod|div;
-mul = lowprio.a MUL firstprio.b{:return new binaryExpression(a,b); :};
-div = lowprio.a DIV firstprio.b{:return new binaryExpression(a,b); :};
-mod = lowprio.a MOD firstprio.b{:return new binaryExpression(a,b); :};
+mul = lowprio.a MUL firstprio.b{:return new Mul(a,b); :};
+div = lowprio.a DIV firstprio.b{:return new Div(a,b); :};
+mod = lowprio.a MOD firstprio.b{:return new Mod(a,b); :};
 
 parenthesis = LEFTPARA expr.a RIGHTPARA{: return new Parenthesis(a); :};
 firstprio = parenthesis | variable | minus;
@@ -107,12 +107,12 @@ variable = nbr | id_use | functioncall;
 minus = MINUS firstprio.a {: return new Minus(a); :};
 
 compare = equals | notequals | lessthan | lessthaneqaul | greaterthan | greaterthanequal; 
-equals = term.a EQUALS term.b {: return new Comparison(a,b); :};
-notequals = term.a NOTEQUALS term.b {: return new Comparison(a,b); :};
-lessthan = term.a LESSTHAN term.b {: return new Comparison(a,b); :};
-lessthaneqaul = term.a LESSTHANEQUAL term.b {: return new Comparison(a,b); :};
-greaterthan = term.a GREATERTHAN term.b {: return new Comparison(a,b); :};
-greaterthanequal = term.a GREATERTHANEQUAL term.b {: return new Comparison(a,b); :};
+equals = term.a EQUALS term.b {: return new Equals(a,b); :};
+notequals = term.a NOTEQUALS term.b {: return new NotEquals(a,b); :};
+lessthan = term.a LESSTHAN term.b {: return new LessThan(a,b); :};
+lessthaneqaul = term.a LESSTHANEQUAL term.b {: return new LessThanEqual(a,b); :};
+greaterthan = term.a GREATERTHAN term.b {: return new GreaterThan(a,b); :};
+greaterthanequal = term.a GREATERTHANEQUAL term.b {: return new GreaterThanEqual(a,b); :};
 
 nbr = NUM.a{: return new Nbr(a); :};
 id_use = ID.a {: return new IdUse(a); :} ;

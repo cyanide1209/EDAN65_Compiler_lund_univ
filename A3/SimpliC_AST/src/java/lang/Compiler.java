@@ -2,6 +2,7 @@ package lang;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.FileNotFoundException;
 
 import beaver.Parser.Exception;
@@ -38,6 +39,7 @@ public class Compiler {
             DrAST_root_node = program; //Enable debugging with DrAST
 			System.out.println(program.dumpTree());
 			System.out.println(String.valueOf(MSN.maximum(program)));
+			program.prettyPrint(System.out);
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found!");
 			System.exit(1);
