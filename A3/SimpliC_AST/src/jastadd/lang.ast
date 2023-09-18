@@ -1,0 +1,32 @@
+Program ::= Function*;
+
+Function ::= IdDecl Argument* Statement*;
+Argument ::= IdDecl;
+
+
+abstract Statement;
+Binding:Statement ::= IdUse Expression;
+Declaration:Statement ::= IdDecl [Expression];
+ReturnState:Statement ::= Expression;
+FunctionCallStmt:Statement ::= FunctionCall;
+If:Statement ::= Expression Statement* [Else];
+Else ::= Statement*;
+While:Statement ::= Expression Statement*;
+
+IdDecl ::= <ID>;
+
+abstract Expression;
+Comparison:Expression ::= left:Term right:Term;
+
+abstract Term:Expression;
+binaryExpression:Term ::= left:Term right:Term;
+
+abstract Firstprio:Term;
+FunctionCall:Firstprio ::= IdUse Term*;
+Minus:Firstprio ::= Firstprio;
+Parenthesis:Firstprio ::= Expression;
+IdUse:Firstprio ::= <ID>;
+Nbr:Firstprio ::= <NUM>;
+
+
+
