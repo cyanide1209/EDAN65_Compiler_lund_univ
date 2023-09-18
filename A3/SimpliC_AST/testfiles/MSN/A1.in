@@ -1,0 +1,5 @@
+int main() {
+    // depth = 1
+    int i = 100;
+return 0;
+}

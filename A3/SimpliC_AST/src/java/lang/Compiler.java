@@ -37,6 +37,7 @@ public class Compiler {
 			Program program = (Program) parser.parse(scanner);
             DrAST_root_node = program; //Enable debugging with DrAST
 			System.out.println(program.dumpTree());
+			System.out.println(String.valueOf(MSN.maximum(program)));
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found!");
 			System.exit(1);
