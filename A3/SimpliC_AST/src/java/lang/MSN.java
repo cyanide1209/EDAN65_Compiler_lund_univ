@@ -18,7 +18,7 @@ public class MSN extends TraversingVisitor{
     public Object visit(Function node, Object data) {
         count++;
         super.visit(node, data);
-        if (count >= maxMSN) {
+        if (count > maxMSN) {
             maxMSN = count;
         }
         count--;
@@ -42,14 +42,6 @@ public class MSN extends TraversingVisitor{
         count--;
         return null;
 	}
-    public Object visit(Else node, Object data) {
-        count++;
-        super.visit(node, data);
-        if (count > maxMSN) {
-            maxMSN = count;
-        }
-        count--;
-        return null;
-	}
+    
 
 }
