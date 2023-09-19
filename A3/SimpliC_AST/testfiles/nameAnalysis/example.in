@@ -1,0 +1,9 @@
+int main() {
+    int a = 3;
+    if (a != 0) {
+        int a = 4; // okay: not in same block
+        return a;
+    }
+    int a = 5; // error: redeclaration
+    return a;
+}
