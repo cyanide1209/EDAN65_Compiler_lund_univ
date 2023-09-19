@@ -1,0 +1,5 @@
+Program ::= Node;
+
+abstract Node;
+Pair : Node ::= Left:Node Right:Node;
+Leaf : Node ::= <Number:int>;

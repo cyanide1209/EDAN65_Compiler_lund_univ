@@ -1,0 +1,15 @@
+aspect MinValue {
+	// Exercise 1
+	syn int Node.localMin() = 0;
+
+	// Exercise 2
+	inh int Node.globalMin();
+	eq Program.getNode().globalMin() = 0;
+
+	// Exercise 3
+	syn boolean Leaf.isMinValue() = false;
+	
+	// Exercise 4
+	syn int Program.nbrOfMinValues() = 0;
+	syn int Node.nbrOfMinValues() = 0;
+}

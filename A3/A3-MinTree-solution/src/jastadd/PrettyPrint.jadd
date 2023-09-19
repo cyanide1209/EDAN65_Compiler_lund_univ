@@ -1,0 +1,32 @@
+import java.io.PrintStream;
+
+aspect PrettyPrint {
+	public static final String ASTNode.TREE_VERSION = "22a";
+	public static String ASTNode.INDENTATION = "  ";
+
+	public void ASTNode.prettyPrint(PrintStream out) {
+		prettyPrint(out, "");
+		out.println();
+	}
+	public void ASTNode.prettyPrint(PrintStream out, String ind) {
+		for (int i = 0; i < getNumChild(); ++i) {
+			getChild(i).prettyPrint(out, ind);
+		}
+	}
+
+
+	public void Program.prettyPrint(PrintStream out, String ind) {
+		getNode().prettyPrint(out, ind);
+	}
+
+	public void Pair.prettyPrint(PrintStream out, String ind) {
+		out.print(ind);
+		out.println("Pair");
+		getLeft().prettyPrint(out, ind + INDENTATION);
+		getRight().prettyPrint(out, ind + INDENTATION);
+	}
+	public void Leaf.prettyPrint(PrintStream out, String ind) {
+		out.print(ind);
+		out.println("Leaf " + getNumber());
+	}
+}
