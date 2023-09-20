@@ -32,17 +32,17 @@
 %typeof returnstmt = "ReturnState";
 %typeof functioncallstmt = "FunctionCallStmt";
 
-%typeof term = "Term";
+%typeof term = "Expression";
 %typeof variable = "Firstprio";
 %typeof functioncall = "FunctionCall";
 %typeof sum = "binaryExpression";
 %typeof sub = "binaryExpression";
-%typeof lowprio = "Term";
+%typeof lowprio = "Expression";
 %typeof div = "binaryExpression";
 %typeof mul = "binaryExpression";
 %typeof mod = "binaryExpression";
 %typeof parenthesis = "Parenthesis";
-%typeof firstprio = "Firstprio";
+%typeof firstprio = "Expression";
 
 %typeof compare = "Comparison";
 %typeof equals = "Comparison";

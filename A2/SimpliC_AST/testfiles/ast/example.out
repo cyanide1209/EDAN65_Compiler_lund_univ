@@ -1,0 +1,25 @@
+Program
+  List
+    Function
+      IdDecl ID="f"
+      List
+        Argument
+          IdDecl ID="x"
+        Argument
+          IdDecl ID="y"
+      List
+        Binding
+          IdUse ID="x"
+          Sum
+            Minus
+              IdUse ID="x"
+            Div
+              Mul
+                Minus
+                  IdUse ID="y"
+                Minus
+                  Nbr NUM="30"
+              Minus
+                Nbr NUM="40"
+        ReturnState
+          IdUse ID="x"

@@ -184,14 +184,14 @@ aspect PrettyPrint {
 		getIdUse().prettyPrint(out, ind);
 		out.print("(");
 		int i = 0;
-        for (Term t : getTerms()) {
+        for (Expression e : getExpressions()) {
 			if(i==0){
-            t.prettyPrint(out, ind);
+            e.prettyPrint(out, ind);
 			i++;
 			}
 			else{
 			out.print(", ");
-			t.prettyPrint(out,ind);
+			e.prettyPrint(out,ind);
 			}
         }
         out.print(")");
@@ -199,7 +199,7 @@ aspect PrettyPrint {
 
 	public void Minus.prettyPrint(PrintStream out, String ind) {
 		out.print("-");
-		getFirstprio().prettyPrint(out, ind);
+		getExpression().prettyPrint(out, ind);
 	}
 
 	public void Parenthesis.prettyPrint(PrintStream out, String ind) {

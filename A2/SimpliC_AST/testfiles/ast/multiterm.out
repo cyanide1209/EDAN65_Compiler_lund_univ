@@ -1,0 +1,45 @@
+Program
+  List
+    Function
+      IdDecl ID="a"
+      List
+      List
+        Declaration
+          IdDecl ID="x"
+          Opt
+        Declaration
+          IdDecl ID="y"
+          Opt
+        Declaration
+          IdDecl ID="z"
+          Opt
+        Declaration
+          IdDecl ID="w"
+          Opt
+        Binding
+          IdUse ID="y"
+          Nbr NUM="5"
+        Binding
+          IdUse ID="x"
+          Sub
+            IdUse ID="y"
+            Nbr NUM="2"
+        Binding
+          IdUse ID="z"
+          Mul
+            IdUse ID="x"
+            IdUse ID="y"
+        Binding
+          IdUse ID="w"
+          Sum
+            IdUse ID="z"
+            Mul
+              Nbr NUM="2"
+              Nbr NUM="4"
+        Binding
+          IdUse ID="w"
+          Sum
+            Mul
+              IdUse ID="z"
+              Nbr NUM="2"
+            Nbr NUM="4"

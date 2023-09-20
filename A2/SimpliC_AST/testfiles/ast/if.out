@@ -1,0 +1,59 @@
+Program
+  List
+    Function
+      IdDecl ID="a"
+      List
+      List
+        Declaration
+          IdDecl ID="x"
+          Opt
+            Nbr NUM="6"
+        If
+          Equals
+            IdUse ID="x"
+            Nbr NUM="7"
+          List
+            Declaration
+              IdDecl ID="z"
+              Opt
+                Nbr NUM="5"
+            If
+              NotEquals
+                Sum
+                  IdUse ID="z"
+                  Nbr NUM="2"
+                Nbr NUM="7"
+              List
+              Opt
+            If
+              LessThan
+                IdUse ID="x"
+                Sum
+                  IdUse ID="z"
+                  Nbr NUM="5"
+              List
+              Opt
+          Opt
+        While
+          Equals
+            IdUse ID="x"
+            Nbr NUM="7"
+          List
+            Declaration
+              IdDecl ID="z"
+              Opt
+                Nbr NUM="5"
+            While
+              NotEquals
+                Sum
+                  IdUse ID="z"
+                  Nbr NUM="2"
+                Nbr NUM="7"
+              List
+            While
+              LessThan
+                IdUse ID="x"
+                Sum
+                  IdUse ID="z"
+                  Nbr NUM="5"
+              List

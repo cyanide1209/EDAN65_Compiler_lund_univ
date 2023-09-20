@@ -1,8 +1,14 @@
 Program
   List
     Function
-      FunctionID ID="a"
-      Opt
+      IdDecl ID="a"
+      List
+      List
     Function
-      FunctionID ID="b"
-      Opt
+      IdDecl ID="b"
+      List
+        Argument
+          IdDecl ID="x"
+        Argument
+          IdDecl ID="y"
+      List

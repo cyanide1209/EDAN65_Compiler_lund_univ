@@ -55,6 +55,8 @@ aspect NameAnalysis {
 	 */
 	public void Program.checkNames(PrintStream err) {
 		SymbolTable symbols = new SymbolTable();
+		symbols.declare("print");
+		symbols.declare("read");
 		checkNames(err, symbols);
 	}
 
@@ -72,26 +74,27 @@ aspect NameAnalysis {
 		if (!symbols.declare(getID())) {
 			err.format("Error at line %d: symbol \'%s\' is already declared!", getLine(), getID());
 			err.println();
+			System.exit(1);
 		}
 	}
 
     public void Function.checkNames(PrintStream err, SymbolTable symbols) {
 		getIdDecl().checkNames(err, symbols);
-		symbols = symbols.push();
+		SymbolTable functionsymbols = symbols.push();
 		for (Argument a : getArguments()) {
-			a.checkNames(err, symbols);
+			a.checkNames(err, functionsymbols);
 		}
 		symbols = symbols.push();
         for (Statement s : getStatements()) {
-            s.checkNames(err, symbols);
+            s.checkNames(err, functionsymbols);
         }
 	}
 
     public void If.checkNames(PrintStream err, SymbolTable symbols) {
 		getExpression().checkNames(err, symbols);
-        symbols = symbols.push();
+        SymbolTable ifsymbols = symbols.push();
         for (Statement s : getStatements()) {
-            s.checkNames(err, symbols);
+            s.checkNames(err, ifsymbols);
         }
         if (hasElse()) {
 			getElse().checkNames(err, symbols.push());
@@ -99,17 +102,17 @@ aspect NameAnalysis {
 	}
 
     public void Else.checkNames(PrintStream err, SymbolTable symbols) {
-        symbols = symbols.push();
+        SymbolTable elsesymbols = symbols.push();
         for (Statement s : getStatements()) {
-            s.checkNames(err, symbols);
+            s.checkNames(err, elsesymbols);
         }
 	} 
     
     public void While.checkNames(PrintStream err, SymbolTable symbols) {
 		getExpression().checkNames(err, symbols);
-        symbols = symbols.push();
+        SymbolTable whilesymbols = symbols.push();
         for (Statement s : getStatements()) {
-            s.checkNames(err, symbols);
+            s.checkNames(err, whilesymbols);
         }
 	}  
 
@@ -117,6 +120,7 @@ aspect NameAnalysis {
 		if (!symbols.lookup(getID())) {
 			err.format("Error at line %d: symbol \'%s\' has not been declared before this use!", getLine(), getID());
 			err.println();
+			System.exit(1);
 		}
 	}
 

@@ -13,10 +13,14 @@ Program
         Declaration
           IdDecl ID="z"
           Opt
-            Nbr NUM="9"
-        Binding
-          IdUse ID="x"
-          Nbr NUM="5"
         Binding
           IdUse ID="y"
+          Nbr NUM="5"
+        Binding
           IdUse ID="x"
+          Nbr NUM="2"
+        Binding
+          IdUse ID="z"
+          Mod
+            IdUse ID="y"
+            IdUse ID="x"
