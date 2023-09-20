@@ -115,69 +115,69 @@ aspect PrettyPrint {
 	}	
 
 	public void LessThan.prettyPrint(PrintStream out, String ind) {
-		getleft().prettyPrint(out, ind);
+		getLeft().prettyPrint(out, ind);
 		out.print(" < ");
-		getright().prettyPrint(out, ind);
+		getRight().prettyPrint(out, ind);
 	}
 
 	public void LessThanEqual.prettyPrint(PrintStream out, String ind) {
-		getleft().prettyPrint(out, ind);
+		getLeft().prettyPrint(out, ind);
 		out.print(" <= ");
-		getright().prettyPrint(out, ind);
+		getRight().prettyPrint(out, ind);
 	}
 
 	public void GreaterThan.prettyPrint(PrintStream out, String ind) {
-		getleft().prettyPrint(out, ind);
+		getLeft().prettyPrint(out, ind);
 		out.print(" > ");
-		getright().prettyPrint(out, ind);
+		getRight().prettyPrint(out, ind);
 	}
 
 	public void GreaterThanEqual.prettyPrint(PrintStream out, String ind) {
-		getleft().prettyPrint(out, ind);
+		getLeft().prettyPrint(out, ind);
 		out.print(" >= ");
-		getright().prettyPrint(out, ind);
+		getRight().prettyPrint(out, ind);
 	}
 
 	public void Equals.prettyPrint(PrintStream out, String ind) {
-		getleft().prettyPrint(out, ind);
+		getLeft().prettyPrint(out, ind);
 		out.print(" == ");
-		getright().prettyPrint(out, ind);
+		getRight().prettyPrint(out, ind);
 	}
 
 	public void NotEquals.prettyPrint(PrintStream out, String ind) {
-		getleft().prettyPrint(out, ind);
+		getLeft().prettyPrint(out, ind);
 		out.print(" != ");
-		getright().prettyPrint(out, ind);
+		getRight().prettyPrint(out, ind);
 	}
 
 	public void Sum.prettyPrint(PrintStream out, String ind) {
-		getleft().prettyPrint(out, ind);
+		getLeft().prettyPrint(out, ind);
 		out.print(" + ");
-		getright().prettyPrint(out, ind);
+		getRight().prettyPrint(out, ind);
 	}
 
 	public void Sub.prettyPrint(PrintStream out, String ind) {
-		getleft().prettyPrint(out, ind);
+		getLeft().prettyPrint(out, ind);
 		out.print(" - ");
-		getright().prettyPrint(out, ind);
+		getRight().prettyPrint(out, ind);
 	}
 
 	public void Mul.prettyPrint(PrintStream out, String ind) {
-		getleft().prettyPrint(out, ind);
+		getLeft().prettyPrint(out, ind);
 		out.print(" * ");
-		getright().prettyPrint(out, ind);
+		getRight().prettyPrint(out, ind);
 	}
 
 	public void Div.prettyPrint(PrintStream out, String ind) {
-		getleft().prettyPrint(out, ind);
+		getLeft().prettyPrint(out, ind);
 		out.print(" / ");
-		getright().prettyPrint(out, ind);
+		getRight().prettyPrint(out, ind);
 	}
 
 	public void Mod.prettyPrint(PrintStream out, String ind) {
-		getleft().prettyPrint(out, ind);
+		getLeft().prettyPrint(out, ind);
 		out.print(" % ");
-		getright().prettyPrint(out, ind);
+		getRight().prettyPrint(out, ind);
 	}
 
 	public void FunctionCall.prettyPrint(PrintStream out, String ind) {

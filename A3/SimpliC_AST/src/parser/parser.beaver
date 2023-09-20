@@ -18,8 +18,8 @@
 %typeof argument_list_empty = "List";
 %typeof argument = "Argument";
 %typeof argument_list = "List";
-%typeof binaryexpr = "binaryExpression";
-%typeof binaryexprlowprio = "binaryExpression";
+%typeof binaryexpr = "BinaryExpression";
+%typeof binaryexprlowprio = "BinaryExpression";
 
 %typeof stmt = "Statement";
 %typeof stmt_list_empty = "List";
@@ -33,14 +33,13 @@
 %typeof functioncallstmt = "FunctionCallStmt";
 
 %typeof term = "Expression";
-%typeof variable = "Firstprio";
 %typeof functioncall = "FunctionCall";
-%typeof sum = "binaryExpression";
-%typeof sub = "binaryExpression";
+%typeof sum = "BinaryExpression";
+%typeof sub = "BinaryExpression";
 %typeof lowprio = "Expression";
-%typeof div = "binaryExpression";
-%typeof mul = "binaryExpression";
-%typeof mod = "binaryExpression";
+%typeof div = "BinaryExpression";
+%typeof mul = "BinaryExpression";
+%typeof mod = "BinaryExpression";
 %typeof parenthesis = "Parenthesis";
 %typeof firstprio = "Expression";
 
@@ -102,8 +101,7 @@ div = lowprio.a DIV firstprio.b{:return new Div(a,b); :};
 mod = lowprio.a MOD firstprio.b{:return new Mod(a,b); :};
 
 parenthesis = LEFTPARA expr.a RIGHTPARA{: return new Parenthesis(a); :};
-firstprio = parenthesis | variable | minus;
-variable = nbr | id_use | functioncall;
+firstprio = parenthesis | nbr | id_use | functioncall | minus;
 minus = MINUS firstprio.a {: return new Minus(a); :};
 
 compare = equals | notequals | lessthan | lessthaneqaul | greaterthan | greaterthanequal; 

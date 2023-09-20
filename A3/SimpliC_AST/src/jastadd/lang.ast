@@ -16,7 +16,7 @@ While:Statement ::= Expression Statement*;
 IdDecl ::= <ID>;
 
 abstract Expression;
-Comparison:Expression ::= left:Expression right:Expression;
+Comparison:Expression ::= Left:Expression Right:Expression;
 LessThan:Comparison;
 LessThanEqual:Comparison;
 GreaterThan:Comparison;
@@ -24,12 +24,12 @@ GreaterThanEqual:Comparison;
 Equals:Comparison;
 NotEquals:Comparison;
 
-binaryExpression:Expression ::= left:Expression right:Expression;
-Sum:binaryExpression;
-Sub:binaryExpression;
-Mul:binaryExpression;
-Div:binaryExpression;
-Mod:binaryExpression;
+BinaryExpression:Expression ::= Left:Expression Right:Expression;
+Sum:BinaryExpression;
+Sub:BinaryExpression;
+Mul:BinaryExpression;
+Div:BinaryExpression;
+Mod:BinaryExpression;
 
 
 FunctionCall:Expression ::= IdUse Expression*;
