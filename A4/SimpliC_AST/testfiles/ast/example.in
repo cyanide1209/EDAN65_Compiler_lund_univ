@@ -1,0 +1,4 @@
+int f(int x, int y) {
+  x = -x + -y * - 30 / - 40;
+  return x;
+}

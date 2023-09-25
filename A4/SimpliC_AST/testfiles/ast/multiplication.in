@@ -1,0 +1,9 @@
+int a(){
+    int x;
+    int y;
+    int z;
+    z = 10;
+    y = 2;
+    x = z * y;
+    z = z * 5;
+}

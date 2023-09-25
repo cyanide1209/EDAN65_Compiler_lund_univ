@@ -1,0 +1,120 @@
+%class "LangParser";
+%package "lang.ast";
+
+%embed {:
+	static public class SyntaxError extends RuntimeException { public SyntaxError(String msg) {super(msg);}}
+	// Disable syntax error recovery
+	protected void recoverFromError(Symbol token, TokenStream in) {
+		throw new SyntaxError("Cannot recover from the syntax error");
+	}
+:};
+
+%terminals ID,LEFTPARA, RIGHTPARA, LEFTCURLYBRACE, RIGHTCURLYBRACE, INT, ASSIGN, SEMICOLON, NUM, ADD, MINUS, DIV, MUL, MOD, IF, ELSE;
+%terminals GREATERTHAN, GREATERTHANEQUAL, LESSTHAN, LESSTHANEQUAL, EQUALS, NOTEQUALS, RETURN, WHILE, COMMA;
+%typeof program = "Program";
+%typeof function = "Function";
+%typeof function_list = "List";
+%typeof function_list_empty = "List";
+%typeof argument_list_empty = "List";
+%typeof argument = "Argument";
+%typeof argument_list = "List";
+%typeof binaryexpr = "BinaryExpression";
+%typeof binaryexprlowprio = "BinaryExpression";
+
+%typeof stmt = "Statement";
+%typeof stmt_list_empty = "List";
+%typeof stmt_list = "List";
+%typeof declr = "Declaration";
+%typeof binding = "Binding";
+%typeof if = "If";
+%typeof else = "Else";
+%typeof while = "While";
+%typeof returnstmt = "ReturnState";
+%typeof functioncallstmt = "FunctionCallStmt";
+
+%typeof term = "Expression";
+%typeof functioncall = "FunctionCall";
+%typeof sum = "BinaryExpression";
+%typeof sub = "BinaryExpression";
+%typeof lowprio = "Expression";
+%typeof div = "BinaryExpression";
+%typeof mul = "BinaryExpression";
+%typeof mod = "BinaryExpression";
+%typeof parenthesis = "Parenthesis";
+%typeof firstprio = "Expression";
+
+%typeof compare = "Comparison";
+%typeof equals = "Comparison";
+%typeof notequals = "Comparison";
+%typeof lessthan = "Comparison";
+%typeof lessthaneqaul = "Comparison";
+%typeof greaterthan = "Comparison";
+%typeof greaterthanequal = "Comparison";
+%typeof minus = "Minus";
+%typeof expr= "Expression";
+
+%typeof term_empty = "List";
+%typeof term_list = "List";
+%typeof id_use = "IdUse";
+%typeof id_decl = "IdDecl";
+%typeof nbr = "Nbr";
+
+
+
+%goal program;
+
+program = function_list_empty.a {: return new Program(a); :};
+function = INT id_decl.a LEFTPARA argument_list_empty.b RIGHTPARA LEFTCURLYBRACE stmt_list_empty.c RIGHTCURLYBRACE {: return new Function(a,b,c); :};			
+function_list_empty = {: return new List(); :}| function_list;
+function_list = function.a {: return new List().add(a); :} 
+				| function_list.a function.b {: return a.add(b); :};
+argument_list_empty = {: return new List(); :}| argument_list;				
+argument = INT id_decl.a {: return new Argument(a); :};
+argument_list = argument.a {: return new List().add(a); :}
+				| argument_list.a COMMA argument.b {: return a.add(b); :};
+
+
+stmt = declr | binding | if | while | returnstmt | functioncallstmt;
+stmt_list_empty = {: return new List(); :}| stmt_list;
+stmt_list = stmt.a {: return new List().add(a); :} 
+			| stmt_list.a stmt.b {: return a.add(b); :};
+declr = INT id_decl.a SEMICOLON {: return new Declaration(a, new Opt()); :} 
+		| INT id_decl.a ASSIGN expr.b SEMICOLON{: return new Declaration(a,new Opt(b)); :};
+binding = id_use.a ASSIGN expr.b SEMICOLON {: return new Binding(a,b); :};
+functioncallstmt = functioncall.a SEMICOLON {: return new FunctionCallStmt(a); :};
+if =IF LEFTPARA expr.a RIGHTPARA LEFTCURLYBRACE stmt_list_empty.b RIGHTCURLYBRACE {: return new If(a, b,new Opt()); :}
+		| IF LEFTPARA expr.a RIGHTPARA LEFTCURLYBRACE stmt_list_empty.b RIGHTCURLYBRACE else.c{:return new If(a,b,new Opt(c)); :};
+while = WHILE LEFTPARA expr.a RIGHTPARA LEFTCURLYBRACE stmt_list_empty.b RIGHTCURLYBRACE {: return new While(a, b); :};
+returnstmt = RETURN expr.a SEMICOLON {: return new ReturnState(a); :};
+else = ELSE LEFTCURLYBRACE stmt_list_empty.b RIGHTCURLYBRACE {: return new Else(b); :};
+
+expr= compare|term;
+term =  binaryexpr|lowprio;
+binaryexpr = sum|sub;
+functioncall = id_use.a LEFTPARA term_empty.b RIGHTPARA {: return new FunctionCall(a, b); :};
+sum = term.a ADD lowprio.b{:return new Sum(a,b); :};
+sub = term.a MINUS lowprio.b{:return new Sub(a,b); :};
+
+lowprio = firstprio|mul|mod|div;
+mul = lowprio.a MUL firstprio.b{:return new Mul(a,b); :};
+div = lowprio.a DIV firstprio.b{:return new Div(a,b); :};
+mod = lowprio.a MOD firstprio.b{:return new Mod(a,b); :};
+
+parenthesis = LEFTPARA expr.a RIGHTPARA{: return new Parenthesis(a); :};
+firstprio = parenthesis | nbr | id_use | functioncall | minus;
+minus = MINUS firstprio.a {: return new Minus(a); :};
+
+compare = equals | notequals | lessthan | lessthaneqaul | greaterthan | greaterthanequal; 
+equals = term.a EQUALS term.b {: return new Equals(a,b); :};
+notequals = term.a NOTEQUALS term.b {: return new NotEquals(a,b); :};
+lessthan = term.a LESSTHAN term.b {: return new LessThan(a,b); :};
+lessthaneqaul = term.a LESSTHANEQUAL term.b {: return new LessThanEqual(a,b); :};
+greaterthan = term.a GREATERTHAN term.b {: return new GreaterThan(a,b); :};
+greaterthanequal = term.a GREATERTHANEQUAL term.b {: return new GreaterThanEqual(a,b); :};
+
+nbr = NUM.a{: return new Nbr(a); :};
+id_use = ID.a {: return new IdUse(a); :} ;
+term_empty = {: return new List(); :}| term_list;
+term_list = term.a {: return new List().add(a); :}
+					| term_list.a COMMA term.b {: return a.add(b); :};
+id_decl = ID.id {: return new IdDecl(id); :} ;
