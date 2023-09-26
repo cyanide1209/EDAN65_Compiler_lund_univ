@@ -10,6 +10,7 @@ import beaver.Parser.Exception;
 import lang.ast.Program;
 import lang.ast.LangParser;
 import lang.ast.LangScanner;
+import lang.ast.ErrorMessage;
 
 /**
  * Dumps the parsed Abstract Syntax Tree of a Calc program.

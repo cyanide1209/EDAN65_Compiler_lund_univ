@@ -34,8 +34,9 @@ aspect NameAnalysis {
 			}
 		}
 		for (int i = 0; i < getNumStatement(); i++) {
-			if (getStatement(i).getIdDecl().getID().equals(name)) {
-				return getStatement(i).getIdDecl();
+			IdDecl decl = getStatement(i).localLookup(name);
+			if (decl.getID().equals(name)) {
+				return decl;
 			}	
 		}
 		return unknownDecl();
@@ -56,7 +57,10 @@ aspect NameAnalysis {
 	syn IdDecl Statement.localLookup(String name) = unknownDecl();
 
 	syn IdDecl Declaration.localLookup(String name){
-		return getIdDecl().getId().equals(name) ? getIdDecl() : unknownDecl();
+		if(getIdDecl().getID().equals(name)) {
+			return getIdDecl();
+		}
+		return unknownDecl();
 	}
 }
 aspect CircularDefinitions {
@@ -64,7 +68,8 @@ aspect CircularDefinitions {
 	syn boolean IdUse.isCircular() = inExpression(decl());
 
 	inh boolean Statement.inExpression(IdDecl decl);
-	eq Binding.getExpression().inExpression(IdDecl decl) = getIdDecl().getID() == decl.getID() || inExpression(decl);
+	eq Declaration.getExpression().inExpression(IdDecl decl) = getIdDecl() == decl || inExpression(decl);
+	//eq Binding.getExpression().inExpression(IdDecl decl) = getIdUse().getID() == decl.getID() || inExpression(decl);
 
 	eq Program.getChild().inExpression(IdDecl decl) = false;
 }
