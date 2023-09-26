@@ -38,5 +38,5 @@ Parenthesis:Expression ::= Expression;
 IdUse:Expression ::= <ID>;
 Nbr:Expression ::= <NUM>;
 
-
+UnknownDecl:IdDecl;
 

@@ -1,6 +1,3 @@
-import java.util.Set;
-import java.util.HashSet;
-
 aspect NameAnalysis {
 	// ID_DECL
 	inh IdDecl IdDecl.lookup(String name);
@@ -12,9 +9,15 @@ aspect NameAnalysis {
 
 	//PROGRAM
 	eq Program.getChild().lookup(String name) {
+		for (Function f : getPredefinedFunctions()) {
+			IdDecl decl = f.getIdDecl();
+			if (decl.getID().equals(name)) {
+				return decl;
+			}
+		}
 		for (Function f : getFunctions()) {
 			IdDecl decl = f.getIdDecl();
-			if(decl.getID.equals(name)){
+			if(decl.getID().equals(name)){
 				return decl;
 			}
 		}
@@ -25,27 +28,26 @@ aspect NameAnalysis {
 	inh IdDecl Function.lookup(String name);
 
 	syn IdDecl Function.localLookup(String name){
-		for (int i = 0; i < getNumArguments(); i++) {
-			if (getArgument(i).getID().equals(name)) {
-				return getArgument(i);
+		for (int i = 0; i < getNumArgument(); i++) {
+			if (getArgument(i).getIdDecl().getID().equals(name)) {
+				return getArgument(i).getIdDecl();
 			}
 		}
-		for (int i = 0; i < getNUmStatements(); i++) {
-			IdDecl decl = s.localLookup(name);
-			if (getStatement(i).getID().equals(name)) {
-				return getStatement(i);
+		for (int i = 0; i < getNumStatement(); i++) {
+			if (getStatement(i).getIdDecl().getID().equals(name)) {
+				return getStatement(i).getIdDecl();
 			}	
 		}
 		return unknownDecl();
 	}
 
 	eq Function.getStatement(int index).lookup(String name) {
-		IdDecl decl = localLookup(name, index);
+		IdDecl decl = localLookup(name);
 		return !decl.isUnknown() ? decl : lookup(name);
 	}
 
 	eq Function.getArgument(int index).lookup(String name) {
-		IdDecl decl = localLookup(name, index);
+		IdDecl decl = localLookup(name);
 		return !decl.isUnknown() ? decl : lookup(name);
 	}
 
@@ -62,7 +64,7 @@ aspect CircularDefinitions {
 	syn boolean IdUse.isCircular() = inExpression(decl());
 
 	inh boolean Statement.inExpression(IdDecl decl);
-	eq Binding.getValue().inExpression(IdDecl decl) = getName() == decl || inExpression(decl);
+	eq Binding.getExpression().inExpression(IdDecl decl) = getIdDecl().getID() == decl.getID() || inExpression(decl);
 
 	eq Program.getChild().inExpression(IdDecl decl) = false;
 }

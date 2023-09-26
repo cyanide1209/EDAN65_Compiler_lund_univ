@@ -40,7 +40,14 @@ public class Compiler {
 			System.out.println(program.dumpTree());
 			System.out.println(String.valueOf(MSN.maximum(program)));
 			program.prettyPrint(System.out);
-			program.checkNames(System.out);
+			if (!program.errors().isEmpty()) {
+				System.err.println();
+				System.err.println("Errors: ");
+				for (ErrorMessage e: program.errors()) {
+					System.err.println("- " + e);
+				}
+				System.exit(1);
+			}
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found!");
 			System.exit(1);
