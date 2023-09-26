@@ -27,10 +27,14 @@ public class TestNameAnalysis {
 
   @Test public void runTest() throws Exception {
     Program program = (Program) Util.parse(new File(TEST_DIRECTORY, filename));
-    String actual = program.dumpTree();
-    Util.compareOutput(actual,
-        new File(TEST_DIRECTORY, Util.changeExtension(filename, ".out")),
-        new File(TEST_DIRECTORY, Util.changeExtension(filename, ".expected")));
+		StringBuilder sb = new StringBuilder();
+		for (ErrorMessage m : program.errors()) {
+			sb.append(m).append("\n");
+		}
+		String actual = sb.toString();
+		Util.compareOutput(actual,
+				new File(TEST_DIRECTORY, Util.changeExtension(filename, ".out")),
+				new File(TEST_DIRECTORY, Util.changeExtension(filename, ".expected")));
   }
 
   @Parameters(name = "{0}")
