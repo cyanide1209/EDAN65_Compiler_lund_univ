@@ -18,7 +18,7 @@ aspect NameAnalysis {
 				return decl;
 			}
 		}
-		return unknownDecl;
+		return unknownDecl();
 	}
 
 	//FUNCTION
@@ -36,7 +36,7 @@ aspect NameAnalysis {
 				return getStatement(i);
 			}	
 		}
-		return unknownDecl;
+		return unknownDecl();
 	}
 
 	eq Function.getStatement(int index).lookup(String name) {
