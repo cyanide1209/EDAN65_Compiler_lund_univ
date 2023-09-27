@@ -34,9 +34,9 @@ syn boolean UnknownType.isUnknown() = true;
 
 syn boolean Type.compatibleType(Type compare);
 
-eq IntType.compatibleType(Type compare) = compare.isInt();
-eq BoolType.compatibleType(Type compare) = compare.isBoolean();
-eq UnknownType.compatibleType(Type compare) = compare.isUnknown();
+eq IntType.compatibleType(Type compare) = compare.isInt() || compare.isUnknown();
+eq BoolType.compatibleType(Type compare) = compare.isBoolean() || compare.isUnknown();
+eq UnknownType.compatibleType(Type compare) = compare.isUnknown() || compare.isInt() || compare.isBoolean();
 
 inh Type Expression.expectedType();
 eq FunctionCall.getExpression().expectedType() = IntType();
@@ -49,7 +49,8 @@ eq If.getExpression().expectedType() = BoolType();
 eq ReturnState.getExpression().expectedType() = IntType();
 eq BinaryExpression.getRight().expectedType() = getLeft().type();
 eq Comparison.getRight().expectedType() = getLeft().type();
-eq Comparison.getLeft().expectedType() = UnknownType();
+eq Comparison.getLeft().expectedType() = IntType();
+eq Equals.getLeft().expectedType() = IntType();
 eq BinaryExpression.getLeft().expectedType() = IntType();
 
 syn boolean Expression.isWrongType() = !expectedType().compatibleType(type());
