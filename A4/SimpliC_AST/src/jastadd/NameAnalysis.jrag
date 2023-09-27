@@ -27,13 +27,13 @@ aspect NameAnalysis {
 	//FUNCTION
 	inh IdDecl Function.lookup(String name);
 
-	syn IdDecl Function.localLookup(String name){
+	syn IdDecl Function.localLookup(String name, int until){
 		for (int i = 0; i < getNumArgument(); i++) {
 			if (getArgument(i).getIdDecl().getID().equals(name)) {
 				return getArgument(i).getIdDecl();
 			}
 		}
-		for (int i = 0; i < getNumStatement(); i++) {
+		for (int i = 0; i <= until; i++) {
 			IdDecl decl = getStatement(i).localLookup(name);
 			if (decl.getID().equals(name)) {
 				return decl;
@@ -43,12 +43,12 @@ aspect NameAnalysis {
 	}
 
 	eq Function.getStatement(int index).lookup(String name) {
-		IdDecl decl = localLookup(name);
+		IdDecl decl = localLookup(name, index);
 		return !decl.isUnknown() ? decl : lookup(name);
 	}
 
 	eq Function.getArgument(int index).lookup(String name) {
-		IdDecl decl = localLookup(name);
+		IdDecl decl = localLookup(name, -1);
 		return !decl.isUnknown() ? decl : lookup(name);
 	}
 
@@ -56,6 +56,7 @@ aspect NameAnalysis {
 	inh IdDecl Statement.lookup(String name);
 	syn IdDecl Statement.localLookup(String name) = unknownDecl();
 
+	//DECLARATION
 	syn IdDecl Declaration.localLookup(String name){
 		if(getIdDecl().getID().equals(name)) {
 			return getIdDecl();
@@ -66,6 +67,76 @@ aspect NameAnalysis {
 	eq Declaration.getIdDecl().lookup(String name) {
         return lookup(name);
     }
+
+	//If, Else, While
+	syn IdDecl If.localLookup(String name, int until) {
+		for (int i = 0; i <= until; i++) {
+			IdDecl decl = getStatement(i).localLookup(name);
+			if (decl.getID().equals(name)) {
+				return decl;
+			}	
+		}
+		return unknownDecl();
+	}
+
+	syn IdDecl Else.localLookup(String name, int until) {
+		for (int i = 0; i <= until; i++) {
+			IdDecl decl = getStatement(i).localLookup(name);
+			if (decl.getID().equals(name)) {
+				return decl;
+			}	
+		}
+		return unknownDecl();
+	}
+
+	syn IdDecl While.localLookup(String name, int until) {
+		for (int i = 0; i <= until; i++) {
+			IdDecl decl = getStatement(i).localLookup(name);
+			if (decl.getID().equals(name)) {
+				return decl;
+			}	
+		}
+		return unknownDecl();
+	}
+
+	eq If.getStatement(int index).lookup(String name) {
+        IdDecl decl = localLookup(name, index);
+        return !decl.isUnknown() ? decl : lookup(name);
+    }
+
+    eq Else.getStatement(int index).lookup(String name) {
+        IdDecl decl = localLookup(name, index);
+        return !decl.isUnknown() ? decl : lookup(name);
+    }
+
+	eq While.getStatement(int index).lookup(String name) {
+        IdDecl decl = localLookup(name, index);
+        return !decl.isUnknown() ? decl : lookup(name);
+    }
+	
+	//Expression
+	inh IdDecl Expression.lookup(String name);
+	syn IdDecl Expression.localLookup(String name) = unknownDecl();
+	
+	//functioncallstmt, functioncall
+	syn IdDecl FunctionCallStmt.localLookup(String name) {
+		getFunctionCall().localLookup(name);
+	}
+
+	syn IdDecl FunctionCall.localLookup(String name) {
+		for (int i = 0; i < getNumExpression(); i++) {
+			if (getExpression().getIdUse().getId().equals(name)) {
+				return getExpression(i).getIdDecl();
+			}
+		}
+		return unknownDecl();
+	}
+
+	eq FunctionCall.getExpression(int index).lookup(String name) {
+		IdDecl decl = localLookup(name);
+        return !decl.isUnknown() ? decl : lookup(name);
+    }
+	
 }
 aspect CircularDefinitions {
 	inh boolean IdUse.inExprOf(IdDecl decl);
@@ -74,6 +145,7 @@ aspect CircularDefinitions {
 	inh boolean Statement.inExprOf(IdDecl decl);
 	eq Declaration.getExpression().inExprOf(IdDecl decl) = getIdDecl() == decl || inExprOf(decl);
 	eq Binding.getExpression().inExprOf(IdDecl decl) = getIdUse().getID() == decl.getID() || inExprOf(decl);
+	eq FunctionCallStmt.getFunctionCall().inExprOf(IdDecl decl) = getIdUse.getID() == decl.getID() || inExprOf(decl);
 
 	eq Program.getChild().inExprOf(IdDecl decl) = false;
 }

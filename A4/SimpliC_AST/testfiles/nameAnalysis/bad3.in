@@ -1,4 +1,2 @@
-int main() {
-  print(a);
-  int a = 10; //error bc of this line
-}
+int f(int x, int y, int z) { return x; }
+int g() { return g(3); }
