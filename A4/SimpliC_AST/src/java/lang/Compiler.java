@@ -49,6 +49,7 @@ public class Compiler {
 				}
 				System.exit(1);
 			}
+			System.out.println("No errors found.");
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found!");
 			System.exit(1);

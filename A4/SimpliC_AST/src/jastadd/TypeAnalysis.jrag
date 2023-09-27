@@ -12,9 +12,6 @@ eq Program.getChild().BoolType() = BoolType();
 inh Type ASTNode.UnknownType();
 eq Program.getChild().UnknownType() = UnknownType();
 
-
-
-
 syn Type IdDecl.type() = IntType();
 
 syn Type Expression.type();
@@ -41,13 +38,19 @@ eq IntType.compatibleType(Type compare) = compare.isInt();
 eq BoolType.compatibleType(Type compare) = compare.isBoolean();
 eq UnknownType.compatibleType(Type compare) = compare.isUnknown();
 
+inh Type Expression.expectedType();
+eq FunctionCall.getExpression().expectedType() = IntType();
+eq FunctionCallStmt.getFunctionCall().expectedType() = IntType();
+eq Binding.getExpression().expectedType() = IntType();
+eq Binding.getIdUse().expectedType() = IntType();
+eq Declaration.getExpression().expectedType() = IntType();
+eq While.getExpression().expectedType() = BoolType();
+eq If.getExpression().expectedType() = BoolType();
+eq ReturnState.getExpression().expectedType() = IntType();
+eq BinaryExpression.getRight().expectedType() = getLeft().type();
+eq Comparison.getRight().expectedType() = getLeft().type();
+eq Comparison.getLeft().expectedType() = UnknownType();
+eq BinaryExpression.getLeft().expectedType() = IntType();
 
-
-syn boolean If.expectedType() = !BoolType().compatibleType(getExpression().type());
-syn boolean While.expectedType() = !BoolType().compatibleType(getExpression().type());
-
-
-    
-syn boolean BinaryExpression.IncompatibleError() = !getLeft().type().compatibleType(getRight().type());
-syn boolean Comparison.IncompatibleError() = !getLeft().type().compatibleType(getRight().type());
+syn boolean Expression.isWrongType() = !expectedType().compatibleType(type());
 }
