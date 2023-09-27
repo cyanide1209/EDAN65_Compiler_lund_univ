@@ -43,4 +43,5 @@ IdUse:Expression ::= <ID>;
 Nbr:Expression ::= <NUM>;
 
 UnknownDecl:IdDecl;
+UnknownFunction:Function;
 

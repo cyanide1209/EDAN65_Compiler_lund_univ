@@ -42,13 +42,13 @@ aspect ErrorContributions {
 	IdUse contributes error("the definition of symbol '" + getID() + "' is circular")
 		when isCircular()
 		to Program.errors() for program(); 
-<<<<<<< HEAD
+		
 	Expression contributes error("Incorrect type")
 		when isWrongType()
 		to Program.errors() for program();
 	
 	FunctionCall contributes error("Incorrect amount of Arguments")
-		when  getIdUse().decl().isFunction() && (getIdUse().decl().getNumArgument() != getNumExpression())
+		when isWrongFuncCall()
 		to Program.errors() for program();	
 
 

@@ -9,7 +9,6 @@ aspect NameAnalysis {
 	inh IdDecl IdUse.lookup(String name);
 	syn IdDecl IdUse.decl() = lookup(getID());
 
-
 	//PROGRAM
 	eq Program.getChild().isFunction(){return false;}
 
@@ -124,31 +123,11 @@ aspect NameAnalysis {
         return !decl.isUnknown() ? decl : lookup(name);
     }
 	
-	
-	// // Expression
-	// inh IdDecl Expression.lookup(String name);
-	// syn IdDecl Expression.localLookup(String name) = unknownDecl();
-	// syn boolean Expression.isFunction(){return false;}
-	// syn boolean Expression.isVariable(){return true;}
-	
-	// //functioncallstmt, functioncall
-	// syn IdDecl FunctionCallStmt.localLookup(String name) {
-	// 	getFunctionCall().localLookup(name);
-	// }
 
-	// syn IdDecl FunctionCall.localLookup(String name) {
-	// 	for (int i = 0; i < getNumExpression(); i++) {
-	// 		if (getExpression().getIdUse().getId().equals(name)) {
-	// 			return getExpression(i).getIdDecl();
-	// 		}
-	// 	}
-	// 	return unknownDecl();
-	// }
+	inh Function IdDecl.function();
 
-	// eq FunctionCall.getExpression(int index).lookup(String name) {
-	// 	IdDecl decl = localLookup(name);
-    //     return !decl.isUnknown() ? decl : lookup(name);
-    // }
+	syn boolean FunctionCall.isWrongFuncCall() =  getNumExpression() != getIdUse().decl().function().getNumArgument();
+	syn Function IdUse.function() = decl().function();
 	
 }
 aspect CircularDefinitions {
