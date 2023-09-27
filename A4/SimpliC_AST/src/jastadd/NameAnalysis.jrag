@@ -4,8 +4,8 @@ aspect NameAnalysis {
 	syn boolean IdDecl.isMultiDeclared() = lookup(getID()) != this;
 
 	//ID_USE
-	syn IdDecl IdUse.decl() = lookup(getID());
 	inh IdDecl IdUse.lookup(String name);
+	syn IdDecl IdUse.decl() = lookup(getID());
 
 	//PROGRAM
 	eq Program.getChild().lookup(String name) {
@@ -39,7 +39,7 @@ aspect NameAnalysis {
 				return decl;
 			}	
 		}
-		return unknownDecl();
+		return lookup(name);
 	}
 
 	eq Function.getStatement(int index).lookup(String name) {
@@ -62,14 +62,18 @@ aspect NameAnalysis {
 		}
 		return unknownDecl();
 	}
+
+	eq Declaration.getIdDecl().lookup(String name) {
+        return lookup(name);
+    }
 }
 aspect CircularDefinitions {
-	inh boolean IdUse.inExpression(IdDecl decl);
-	syn boolean IdUse.isCircular() = inExpression(decl());
+	inh boolean IdUse.inExprOf(IdDecl decl);
+	syn boolean IdUse.isCircular() = inExprOf(decl());
 
-	inh boolean Statement.inExpression(IdDecl decl);
-	eq Declaration.getExpression().inExpression(IdDecl decl) = getIdDecl() == decl || inExpression(decl);
-	//eq Binding.getExpression().inExpression(IdDecl decl) = getIdUse().getID() == decl.getID() || inExpression(decl);
+	inh boolean Statement.inExprOf(IdDecl decl);
+	eq Declaration.getExpression().inExprOf(IdDecl decl) = getIdDecl() == decl || inExprOf(decl);
+	eq Binding.getExpression().inExprOf(IdDecl decl) = getIdUse().getID() == decl.getID() || inExprOf(decl);
 
-	eq Program.getChild().inExpression(IdDecl decl) = false;
+	eq Program.getChild().inExprOf(IdDecl decl) = false;
 }

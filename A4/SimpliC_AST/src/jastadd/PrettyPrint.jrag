@@ -38,8 +38,8 @@ aspect PrettyPrint {
         for (Statement s : getStatements()){
 			out.print(ind+"    ");
 			s.prettyPrint(out,ind + "    ");
+			out.println();
         }
-		out.println();
 		out.println(ind + "}");
 	}
 

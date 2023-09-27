@@ -1,0 +1,4 @@
+int main() {
+  print(a);
+  int a = 10; //error bc of this line
+}

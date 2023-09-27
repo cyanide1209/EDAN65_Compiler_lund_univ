@@ -5,5 +5,5 @@ aspect UnknownDecl {
 	eq Program.getChild().unknownDecl() = unknownDecl();
 	
 	syn boolean IdDecl.isUnknown() = false;
-	// eq UnknownDecl.isUnknown() = true;
+	eq UnknownDecl.isUnknown() = true;
 }
