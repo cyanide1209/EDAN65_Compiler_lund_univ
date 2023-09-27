@@ -2,12 +2,17 @@ aspect NameAnalysis {
 	// ID_DECL
 	inh IdDecl IdDecl.lookup(String name);
 	syn boolean IdDecl.isMultiDeclared() = lookup(getID()) != this;
+	inh boolean IdDecl.isFunction();
+	syn boolean IdDecl.isVariable() = !isFunction();
 
 	//ID_USE
 	inh IdDecl IdUse.lookup(String name);
 	syn IdDecl IdUse.decl() = lookup(getID());
 
+
 	//PROGRAM
+	eq Program.getChild().isFunction(){return false;}
+
 	eq Program.getChild().lookup(String name) {
 		for (Function f : getPredefinedFunctions()) {
 			IdDecl decl = f.getIdDecl();
@@ -26,6 +31,7 @@ aspect NameAnalysis {
 
 	//FUNCTION
 	inh IdDecl Function.lookup(String name);
+	eq Function.getIdDecl().isFunction(){return true;}
 
 	syn IdDecl Function.localLookup(String name, int until){
 		for (int i = 0; i < getNumArgument(); i++) {
@@ -57,6 +63,9 @@ aspect NameAnalysis {
 	syn IdDecl Statement.localLookup(String name) = unknownDecl();
 
 	//DECLARATION
+	syn boolean Declaration.isFunction(){return true;}
+	syn boolean Declaration.isVariable(){return false;}
+
 	syn IdDecl Declaration.localLookup(String name){
 		if(getIdDecl().getID().equals(name)) {
 			return getIdDecl();
@@ -69,6 +78,7 @@ aspect NameAnalysis {
     }
 
 	//If, Else, While
+
 	syn IdDecl If.localLookup(String name, int until) {
 		for (int i = 0; i <= until; i++) {
 			IdDecl decl = getStatement(i).localLookup(name);
@@ -114,28 +124,31 @@ aspect NameAnalysis {
         return !decl.isUnknown() ? decl : lookup(name);
     }
 	
-	//Expression
-	inh IdDecl Expression.lookup(String name);
-	syn IdDecl Expression.localLookup(String name) = unknownDecl();
 	
-	//functioncallstmt, functioncall
-	syn IdDecl FunctionCallStmt.localLookup(String name) {
-		getFunctionCall().localLookup(name);
-	}
+	// // Expression
+	// inh IdDecl Expression.lookup(String name);
+	// syn IdDecl Expression.localLookup(String name) = unknownDecl();
+	// syn boolean Expression.isFunction(){return false;}
+	// syn boolean Expression.isVariable(){return true;}
+	
+	// //functioncallstmt, functioncall
+	// syn IdDecl FunctionCallStmt.localLookup(String name) {
+	// 	getFunctionCall().localLookup(name);
+	// }
 
-	syn IdDecl FunctionCall.localLookup(String name) {
-		for (int i = 0; i < getNumExpression(); i++) {
-			if (getExpression().getIdUse().getId().equals(name)) {
-				return getExpression(i).getIdDecl();
-			}
-		}
-		return unknownDecl();
-	}
+	// syn IdDecl FunctionCall.localLookup(String name) {
+	// 	for (int i = 0; i < getNumExpression(); i++) {
+	// 		if (getExpression().getIdUse().getId().equals(name)) {
+	// 			return getExpression(i).getIdDecl();
+	// 		}
+	// 	}
+	// 	return unknownDecl();
+	// }
 
-	eq FunctionCall.getExpression(int index).lookup(String name) {
-		IdDecl decl = localLookup(name);
-        return !decl.isUnknown() ? decl : lookup(name);
-    }
+	// eq FunctionCall.getExpression(int index).lookup(String name) {
+	// 	IdDecl decl = localLookup(name);
+    //     return !decl.isUnknown() ? decl : lookup(name);
+    // }
 	
 }
 aspect CircularDefinitions {
@@ -145,7 +158,7 @@ aspect CircularDefinitions {
 	inh boolean Statement.inExprOf(IdDecl decl);
 	eq Declaration.getExpression().inExprOf(IdDecl decl) = getIdDecl() == decl || inExprOf(decl);
 	eq Binding.getExpression().inExprOf(IdDecl decl) = getIdUse().getID() == decl.getID() || inExprOf(decl);
-	eq FunctionCallStmt.getFunctionCall().inExprOf(IdDecl decl) = getIdUse.getID() == decl.getID() || inExprOf(decl);
+	// eq FunctionCallStmt.getFunctionCall().inExprOf(IdDecl decl) = getIdUse.getID() == decl.getID() || inExprOf(decl);
 
 	eq Program.getChild().inExprOf(IdDecl decl) = false;
 }

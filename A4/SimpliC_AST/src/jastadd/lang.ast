@@ -14,7 +14,7 @@ Declaration:Statement ::= IdDecl [Expression];
 ReturnState:Statement ::= Expression;
 FunctionCallStmt:Statement ::= FunctionCall;
 If:Statement ::= Expression Statement* [Else];
-Else ::= Statement*;
+Else:Statement ::= Statement*;
 While:Statement ::= Expression Statement*;
 
 IdDecl ::= <ID>;
