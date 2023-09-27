@@ -43,10 +43,10 @@ aspect ErrorContributions {
 		when isCircular()
 		to Program.errors() for program(); 
 	If contributes error("Incorrect type")
-		when isWrongType()
+		when expectedType()
 		to Program.errors() for program();
 	While contributes error("Incorrect type")
-		when isWrongType()
+		when expectedType()
 		to Program.errors() for program();
 	BinaryExpression contributes error("Incompatable Types Equated")
 		when IncompatibleError()

@@ -9,7 +9,7 @@
 	}
 :};
 
-%terminals ID,LEFTPARA, RIGHTPARA, LEFTCURLYBRACE, RIGHTCURLYBRACE, INT, ASSIGN, SEMICOLON, NUM, ADD, MINUS, DIV, MUL, MOD, IF, ELSE;
+%terminals ID,LEFTPARA, RIGHTPARA, LEFTCURLYBRACE, RIGHTCURLYBRACE, INT,  ASSIGN, SEMICOLON, NUM, ADD, MINUS, DIV, MUL, MOD, IF, ELSE;
 %terminals GREATERTHAN, GREATERTHANEQUAL, LESSTHAN, LESSTHANEQUAL, EQUALS, NOTEQUALS, RETURN, WHILE, COMMA;
 %typeof program = "Program";
 %typeof function = "Function";
@@ -61,7 +61,10 @@
 
 
 
+
+
 %goal program;
+
 
 program = function_list_empty.a {: return new Program(a); :};
 function = INT id_decl.a LEFTPARA argument_list_empty.b RIGHTPARA LEFTCURLYBRACE stmt_list_empty.c RIGHTCURLYBRACE {: return new Function(a,b,c); :};			
