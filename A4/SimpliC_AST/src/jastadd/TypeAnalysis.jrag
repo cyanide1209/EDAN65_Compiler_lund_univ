@@ -1,0 +1,44 @@
+aspect TypeAnalysis{
+syn nta IntType Program.IntType() = new IntType();
+syn nta BoolType Program.BoolType() = new BoolType();
+syn nta UnknownType Program.UnknownType() = new UnknownType();
+
+
+
+syn Type IdDecl.type() = getType();
+
+syn Type Comparison.type() = BoolType();
+syn Type BinaryExpression.type() = IntType();
+syn Type Nbr.type() = IntType();
+syn Type IdUse.type() = decl().type();
+syn Type FunctionCall.type() = decl().type();
+
+syn boolean Type.compatibleType(Type compare);
+
+eq IntType.compatibleType(Type compare) = compare.isInt();
+eq BoolType.compatibleType(Type compare) = compare.isBoolean();
+eq UnknownType.compatibleType(Type compare) = compare.isUnknown();
+
+syn boolean IntType.isInt() = true;
+syn boolean IntType.isBoolean() = false;
+syn boolean IntType.isUnknown() = false;
+
+syn boolean BoolType.isIntType() = false;
+syn boolean BoolType.isBoolean() = true;
+syn boolean BoolType.isUnknown() = false;
+
+syn boolean UnknownType.isIntType() = false;
+syn boolean UnknownType.isBoolean() = false;
+syn boolean UnknownType.isUnknown() = true;
+
+
+syn Type If.expectedType() = BoolType();
+syn Type While.expectedType() = BoolType();
+syn boolean If.isWrongType() = !expectedType().compatibleType(getExpression().type());
+syn boolean While.isWrongType() = !expectedType().compatibleType(getExpression().type());
+
+
+    
+syn boolean BinaryExpression.IncompatibleError() = !getLeft().type().isCompatible(getRight().type());
+syn boolean Comparison.IncompatibleError() = !getLeft().type().isCompatible(getRight().type());
+}

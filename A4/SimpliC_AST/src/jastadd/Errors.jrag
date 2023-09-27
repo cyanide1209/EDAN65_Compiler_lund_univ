@@ -42,4 +42,17 @@ aspect ErrorContributions {
 	IdUse contributes error("the definition of symbol '" + getID() + "' is circular")
 		when isCircular()
 		to Program.errors() for program(); 
+	If contributes error("Incorrect type")
+		when isWrongType()
+		to Program.errors() for program();
+	While contributes error("Incorrect type")
+		when isWrongType()
+		to Program.errors() for program();
+	BinaryExpression contributes error("Incompatable Types Equated")
+		when IncompatibleError()
+		to Program.errors() for program();
+	Comparison contributes error("Incompatable Types Equated")
+		when IncompatibleError()
+		to Program.errors() for program();
+
 }

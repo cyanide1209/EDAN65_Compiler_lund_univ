@@ -3,6 +3,10 @@ Program ::= Function*;
 Function ::= IdDecl Argument* Statement*;
 Argument ::= IdDecl;
 
+abstract Type;
+IntType: Type;
+BoolType: Type;
+UnknownType: Type;
 
 abstract Statement;
 Binding:Statement ::= IdUse Expression;
