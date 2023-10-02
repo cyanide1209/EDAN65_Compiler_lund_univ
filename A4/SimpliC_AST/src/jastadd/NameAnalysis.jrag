@@ -121,13 +121,23 @@ aspect NameAnalysis {
 	eq While.getStatement(int index).lookup(String name) {
         IdDecl decl = localLookup(name, index);
         return !decl.isUnknown() ? decl : lookup(name);
-    }
-	
+    }	
 
 	inh Function IdDecl.function();
 
-	syn boolean FunctionCall.isWrongFuncCall() =  getNumExpression() != getIdUse().decl().function().getNumArgument();
+	syn boolean FunctionCall.isWrongFuncCall() = getNumExpression() != getIdUse().decl().function().getNumArgument();
 	syn Function IdUse.function() = decl().function();
+
+	eq Function.getIdDecl().function() = this;
+  	eq Program.getChild().function() = unknownFunction();
+	
+	//unknown Function
+	syn nta UnknownFunction Program.unknownFunction() = new UnknownFunction(new IdDecl("<unknown-function>"), new List(), new List());
+	inh UnknownFunction ASTNode.unknownFunction();
+	syn boolean Function.isUnknownFunction() = false;
+	
+	eq Program.getChild().unknownFunction() = unknownFunction();
+	eq UnknownFunction.isUnknownFunction() = true;
 	
 }
 aspect CircularDefinitions {
@@ -137,7 +147,6 @@ aspect CircularDefinitions {
 	inh boolean Statement.inExprOf(IdDecl decl);
 	eq Declaration.getExpression().inExprOf(IdDecl decl) = getIdDecl() == decl || inExprOf(decl);
 	eq Binding.getExpression().inExprOf(IdDecl decl) = getIdUse().getID() == decl.getID() || inExprOf(decl);
-	// eq FunctionCallStmt.getFunctionCall().inExprOf(IdDecl decl) = getIdUse.getID() == decl.getID() || inExprOf(decl);
 
 	eq Program.getChild().inExprOf(IdDecl decl) = false;
 }
