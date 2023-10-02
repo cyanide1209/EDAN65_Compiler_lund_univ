@@ -1,0 +1,143 @@
+aspect NameAnalysis {
+	// ID_DECL
+	inh IdDecl IdDecl.lookup(String name);
+	syn boolean IdDecl.isMultiDeclared() = lookup(getID()) != this;
+	inh boolean IdDecl.isFunction();
+	syn boolean IdDecl.isVariable() = !isFunction();
+
+	//ID_USE
+	inh IdDecl IdUse.lookup(String name);
+	syn IdDecl IdUse.decl() = lookup(getID());
+
+	//PROGRAM
+	eq Program.getChild().isFunction(){return false;}
+
+	eq Program.getChild().lookup(String name) {
+		for (Function f : getPredefinedFunctions()) {
+			IdDecl decl = f.getIdDecl();
+			if (decl.getID().equals(name)) {
+				return decl;
+			}
+		}
+		for (Function f : getFunctions()) {
+			IdDecl decl = f.getIdDecl();
+			if(decl.getID().equals(name)){
+				return decl;
+			}
+		}
+		return unknownDecl();
+	}
+
+	//FUNCTION
+	inh IdDecl Function.lookup(String name);
+	eq Function.getIdDecl().isFunction(){return true;}
+
+	syn IdDecl Function.localLookup(String name, int until){
+		for (int i = 0; i < getNumArgument(); i++) {
+			if (getArgument(i).getIdDecl().getID().equals(name)) {
+				return getArgument(i).getIdDecl();
+			}
+		}
+		for (int i = 0; i <= until; i++) {
+			IdDecl decl = getStatement(i).localLookup(name);
+			if (decl.getID().equals(name)) {
+				return decl;
+			}	
+		}
+		return lookup(name);
+	}
+
+	eq Function.getStatement(int index).lookup(String name) {
+		IdDecl decl = localLookup(name, index);
+		return !decl.isUnknown() ? decl : lookup(name);
+	}
+
+	eq Function.getArgument(int index).lookup(String name) {
+		IdDecl decl = localLookup(name, -1);
+		return !decl.isUnknown() ? decl : lookup(name);
+	}
+
+	//STATEMENT
+	inh IdDecl Statement.lookup(String name);
+	syn IdDecl Statement.localLookup(String name) = unknownDecl();
+
+	//DECLARATION
+	syn boolean Declaration.isFunction(){return true;}
+	syn boolean Declaration.isVariable(){return false;}
+
+	syn IdDecl Declaration.localLookup(String name){
+		if(getIdDecl().getID().equals(name)) {
+			return getIdDecl();
+		}
+		return unknownDecl();
+	}
+
+	eq Declaration.getIdDecl().lookup(String name) {
+        return lookup(name);
+    }
+
+	//If, Else, While
+
+	syn IdDecl If.localLookup(String name, int until) {
+		for (int i = 0; i <= until; i++) {
+			IdDecl decl = getStatement(i).localLookup(name);
+			if (decl.getID().equals(name)) {
+				return decl;
+			}	
+		}
+		return unknownDecl();
+	}
+
+	syn IdDecl Else.localLookup(String name, int until) {
+		for (int i = 0; i <= until; i++) {
+			IdDecl decl = getStatement(i).localLookup(name);
+			if (decl.getID().equals(name)) {
+				return decl;
+			}	
+		}
+		return unknownDecl();
+	}
+
+	syn IdDecl While.localLookup(String name, int until) {
+		for (int i = 0; i <= until; i++) {
+			IdDecl decl = getStatement(i).localLookup(name);
+			if (decl.getID().equals(name)) {
+				return decl;
+			}	
+		}
+		return unknownDecl();
+	}
+
+	eq If.getStatement(int index).lookup(String name) {
+        IdDecl decl = localLookup(name, index);
+        return !decl.isUnknown() ? decl : lookup(name);
+    }
+
+    eq Else.getStatement(int index).lookup(String name) {
+        IdDecl decl = localLookup(name, index);
+        return !decl.isUnknown() ? decl : lookup(name);
+    }
+
+	eq While.getStatement(int index).lookup(String name) {
+        IdDecl decl = localLookup(name, index);
+        return !decl.isUnknown() ? decl : lookup(name);
+    }
+	
+
+	inh Function IdDecl.function();
+
+	syn boolean FunctionCall.isWrongFuncCall() =  getNumExpression() != getIdUse().decl().function().getNumArgument();
+	syn Function IdUse.function() = decl().function();
+	
+}
+aspect CircularDefinitions {
+	inh boolean IdUse.inExprOf(IdDecl decl);
+	syn boolean IdUse.isCircular() = inExprOf(decl());
+
+	inh boolean Statement.inExprOf(IdDecl decl);
+	eq Declaration.getExpression().inExprOf(IdDecl decl) = getIdDecl() == decl || inExprOf(decl);
+	eq Binding.getExpression().inExprOf(IdDecl decl) = getIdUse().getID() == decl.getID() || inExprOf(decl);
+	// eq FunctionCallStmt.getFunctionCall().inExprOf(IdDecl decl) = getIdUse.getID() == decl.getID() || inExprOf(decl);
+
+	eq Program.getChild().inExprOf(IdDecl decl) = false;
+}

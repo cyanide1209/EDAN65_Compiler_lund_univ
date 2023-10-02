@@ -1,0 +1,57 @@
+aspect TypeAnalysis{
+syn nta IntType Program.IntType() = new IntType();
+syn nta BoolType Program.BoolType() = new BoolType();
+syn nta UnknownType Program.UnknownType() = new UnknownType();
+
+inh Type ASTNode.IntType();
+eq Program.getChild().IntType() = IntType();
+
+inh Type ASTNode.BoolType();
+eq Program.getChild().BoolType() = BoolType();
+
+inh Type ASTNode.UnknownType();
+eq Program.getChild().UnknownType() = UnknownType();
+
+syn Type IdDecl.type() = IntType();
+
+syn Type Expression.type();
+syn Type Comparison.type() = BoolType();
+syn Type BinaryExpression.type() = IntType();
+syn Type Nbr.type() = IntType();
+syn Type IdUse.type() = decl().type();
+syn Type FunctionCall.type() = getIdUse().type();
+syn Type Minus.type() = getExpression().type();
+syn Type Parenthesis.type() = getExpression().type();
+
+
+syn boolean Type.isInt() = false;
+syn boolean Type.isBoolean() = false;
+syn boolean Type.isUnknown() = false;
+
+syn boolean IntType.isInt() = true;
+syn boolean BoolType.isBoolean() = true;
+syn boolean UnknownType.isUnknown() = true;
+
+syn boolean Type.compatibleType(Type compare);
+
+eq IntType.compatibleType(Type compare) = compare.isInt() || compare.isUnknown();
+eq BoolType.compatibleType(Type compare) = compare.isBoolean() || compare.isUnknown();
+eq UnknownType.compatibleType(Type compare) = compare.isUnknown() || compare.isInt() || compare.isBoolean();
+
+inh Type Expression.expectedType();
+eq FunctionCall.getExpression().expectedType() = IntType();
+eq FunctionCallStmt.getFunctionCall().expectedType() = IntType();
+eq Binding.getExpression().expectedType() = IntType();
+eq Binding.getIdUse().expectedType() = IntType();
+eq Declaration.getExpression().expectedType() = IntType();
+eq While.getExpression().expectedType() = BoolType();
+eq If.getExpression().expectedType() = BoolType();
+eq ReturnState.getExpression().expectedType() = IntType();
+eq BinaryExpression.getRight().expectedType() = getLeft().type();
+eq Comparison.getRight().expectedType() = getLeft().type();
+eq Comparison.getLeft().expectedType() = IntType();
+eq Equals.getLeft().expectedType() = IntType();
+eq BinaryExpression.getLeft().expectedType() = IntType();
+
+syn boolean Expression.isWrongType() = !expectedType().compatibleType(type());
+}
