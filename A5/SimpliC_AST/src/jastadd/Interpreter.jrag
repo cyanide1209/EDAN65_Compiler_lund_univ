@@ -1,9 +1,18 @@
 import java.util.Set;
 import java.util.TreeSet;
+import java.lang.Integer;
 
 aspect Interpreter {
     public class ActivationRecord {
+        protected int value;
         
+        int getValue(){
+            return value;
+        }
+        
+        void setValue(int x){
+            value = x;
+        }
     }
     protected ActivationRecord ASTNode.create() {
 		return new ActivationRecord();
@@ -17,13 +26,80 @@ aspect Interpreter {
         if (lookup("main") == unknownDecl()){
             throw new RuntimeException("no main function");
         }
+        else {
+            for (Statement s: getStatements()){
+                s.eval(actrec);
+            }
+        }
         return 0;
     }
-    public void Statement.eval(ActivationRecord actrec){
-        throw new RuntimeException("bye");
+    abstract public void Statement.eval(ActivationRecord actrec);
+
+    public void Declaration.eval(ActivationRecord actrec){
+        System.out.println("Declaration");
+        System.out.println(getExpression().eval(actrec));
     }
-    public int Expression.eval(ActivationRecord actrec){
-        throw new RuntimeException("cya");
+    public void Binding.eval(ActivationRecord actrec){
+        System.out.println("Binding");
+    }
+    public void ReturnState.eval(ActivationRecord actrec){
+        System.out.println("Return Statement");
+    }
+    public void FunctionCallStmt.eval(ActivationRecord actrec){
+        System.out.println("Function Call Statement");
+    }
+    public void If.eval(ActivationRecord actrec){
+        System.out.println("If");
+    }
+    public void While.eval(ActivationRecord actrec){
+        System.out.println("While");
+    }
+    public void Else.eval(ActivationRecord actrec){
+        System.out.println("Else");
     }
     
+    abstract int Expression.eval(ActivationRecord actrec);
+
+    public int BinaryExpression.eval(ActivationRecord actrec){
+        System.out.println("Binary Expression");
+        return getLeft().eval(actrec) + getRight().eval(actrec);
+    }
+    public int Sum.eval(ActivationRecord actrec){
+        System.out.println("Sum");
+        return getLeft().eval(actrec) + getRight().eval(actrec);
+    } 
+    public int Sub.eval(ActivationRecord actrec){
+        System.out.println("Sub");
+        return getLeft().eval(actrec) - getRight().eval(actrec);
+    }
+    public int Mul.eval(ActivationRecord actrec){
+        System.out.println("Mul");
+        return getLeft().eval(actrec) * getRight().eval(actrec);
+    }
+    public int Div.eval(ActivationRecord actrec){
+        System.out.println("Div");
+        return getLeft().eval(actrec) / getRight().eval(actrec);
+    }
+    public int Mod.eval(ActivationRecord actrec){
+        return 0;
+    }
+    public int Comparison.eval(ActivationRecord actrec){
+        return 0;
+    }
+    public int FunctionCall.eval(ActivationRecord actrec){
+        return 0;
+    }
+    public int Parenthesis.eval(ActivationRecord actrec){
+        return 0;
+    }
+    public int Minus.eval(ActivationRecord actrec){
+        return 0;
+    }
+    public int IdUse.eval(ActivationRecord actrec){
+        return 0;
+    }
+    public int Nbr.eval(ActivationRecord actrec){
+        // int a = (int) getNUM();
+        return Integer.valueOf(getNUM());
+    }
 }
