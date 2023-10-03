@@ -3,10 +3,11 @@ import java.util.TreeSet;
 
 aspect Interpreter {
     public class ActivationRecord {
-        public void eval(ActivationRecord test) {
-
-		}
+        
     }
+    protected ActivationRecord ASTNode.create() {
+		return new ActivationRecord();
+	}
     public void Program.eval(){
         throw new RuntimeException();
     }

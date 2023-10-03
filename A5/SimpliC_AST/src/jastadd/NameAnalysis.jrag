@@ -129,6 +129,16 @@ aspect NameAnalysis {
 	syn boolean FunctionCall.isWrongFuncCall() =  getNumExpression() != getIdUse().decl().function().getNumArgument();
 	syn Function IdUse.function() = decl().function();
 	
+	eq Function.getIdDecl().function() = this;
+  	eq Program.getChild().function() = unknownFunction();
+
+	//unknown Function
+	syn nta UnknownFunction Program.unknownFunction() = new UnknownFunction(new IdDecl("<unknown-function>"), new List(), new List());
+	inh UnknownFunction ASTNode.unknownFunction();
+	syn boolean Function.isUnknownFunction() = false;
+	
+	eq Program.getChild().unknownFunction() = unknownFunction();
+	eq UnknownFunction.isUnknownFunction() = true;
 }
 aspect CircularDefinitions {
 	inh boolean IdUse.inExprOf(IdDecl decl);
