@@ -5,21 +5,25 @@ import java.util.HashMap;
 
 aspect Interpreter {
     public class ActivationRecord {
-        HashMap variableList;
+        protected HashMap variableList;
 
 		public ActivationRecord() {
 			variableList = new HashMap();
 		}
 
-        public int get(String var) {
-			return (int) variableList.get(var);
+        public Integer get(String var) {
+			return (Integer) variableList.get(var);
 		}
 
-		public void put(String var, int val) {
+		public void put(String var, Integer val) {
 			variableList.put(var, val);
 		}
-		
+
+        // public boolean returnval(){
+        //     return variableList.get("return") != null;
+        // }
     }
+    
     protected ActivationRecord ASTNode.create() {
 		return new ActivationRecord();
 	}
@@ -40,9 +44,12 @@ aspect Interpreter {
         else if(actrec != null){
             for (Statement s: getStatements()){
                 s.eval(actrec);
+                if(actrec.get("return") != null){
+                    return actrec.get("return");
+                }
             }
         }
-        return -1;
+        return 0;
     }
     abstract public void Statement.eval(ActivationRecord actrec);
 
@@ -58,7 +65,8 @@ aspect Interpreter {
         actrec.put(getIdUse().getID(), getExpression().eval(actrec));
     }
     public void ReturnState.eval(ActivationRecord actrec){
-        System.out.println("return");
+        actrec.put("return", getExpression().eval(actrec));
+        System.out.println("returning " + actrec.get("return"));
     }
     public void FunctionCallStmt.eval(ActivationRecord actrec){
         if (getFunctionCall().getIdUse().getID().equals("print")){
@@ -67,13 +75,16 @@ aspect Interpreter {
             }
         }
         else {
-            System.out.println(getFunctionCall().eval(actrec));
+            getFunctionCall().eval(actrec);
         }
     }
     public void If.eval(ActivationRecord actrec){
         if (getExpression().eval(actrec)==1){
             for (Statement s: getStatements()){
                 s.eval(actrec);
+                if(actrec.get("return") != 0){
+                    return;
+                }
             }
         }
         else if (hasElse()){
@@ -84,6 +95,9 @@ aspect Interpreter {
         if (getExpression().eval(actrec)==1){
             for (Statement s: getStatements()){
                 s.eval(actrec);
+                if(actrec.get("return") != 0){
+                    return;
+                }
             }
         }
     }
@@ -141,9 +155,9 @@ aspect Interpreter {
             arguments[i] = f.getArgument(i).getIdDecl().getID();
         }
         //using the variables thing attatch argument ids to the values of the expressions
-        ActivationRecord fcactrec = new ActivationRecord();
+        ActivationRecord fcactrec = create();
+        int i = 0;
         for (Expression e: getExpressions()){
-            int i = 0;
             fcactrec.put(arguments[i], e.eval(actrec));
             i++;
         }

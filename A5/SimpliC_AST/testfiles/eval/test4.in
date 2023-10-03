@@ -3,5 +3,6 @@ int add(int a, int b) {
 }
 int main() {
     int i = 10;
-    print(add(i, 20)); // Call with 2 arguments: first value of i, second value 20.
+    add(10, 20); // Call with 2 arguments: first value of i, second value 20.
+    
 }
