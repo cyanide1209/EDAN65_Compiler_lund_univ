@@ -9,16 +9,21 @@ aspect Interpreter {
 		return new ActivationRecord();
 	}
     public void Program.eval(){
-        throw new RuntimeException();
+        for (Function f: getFunctions()){
+            f.eval(create());
+        }
     }
     public int Function.eval(ActivationRecord actrec){
-        throw new RuntimeException();
+        if (lookup("main") == unknownDecl()){
+            throw new RuntimeException("no main function");
+        }
+        return 0;
     }
     public void Statement.eval(ActivationRecord actrec){
-        throw new RuntimeException();
+        throw new RuntimeException("bye");
     }
     public int Expression.eval(ActivationRecord actrec){
-        throw new RuntimeException();
+        throw new RuntimeException("cya");
     }
     
 }
