@@ -1,10 +1,24 @@
 import java.util.Set;
 import java.util.TreeSet;
 import java.lang.Integer;
+import java.util.HashMap;
 
 aspect Interpreter {
     public class ActivationRecord {
-        
+        HashMap variableList;
+
+		public ActivationRecord() {
+			variableList = new HashMap();
+		}
+
+        public int get(String var) {
+			return (int) variableList.get(var);
+		}
+
+		public void put(String var, int val) {
+			variableList.put(var, val);
+		}
+		
     }
     protected ActivationRecord ASTNode.create() {
 		return new ActivationRecord();
