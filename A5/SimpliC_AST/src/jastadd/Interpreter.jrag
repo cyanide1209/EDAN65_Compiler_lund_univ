@@ -25,14 +25,19 @@ aspect Interpreter {
 	}
     public void Program.eval(){
         for (Function f: getFunctions()){
-            f.eval(create());
+            if(f.getIdDecl().lookup("main") != unknownDecl()){
+                f.eval(create());
+            }
+            else{
+                f.eval(null);
+            }
         }
     }
     public int Function.eval(ActivationRecord actrec){
         if (lookup("main") == unknownDecl()){
             throw new RuntimeException("no main function");
         }
-        else {
+        else if(actrec != null){
             for (Statement s: getStatements()){
                 s.eval(actrec);
             }
@@ -126,11 +131,20 @@ aspect Interpreter {
     public int Equals.eval(ActivationRecord actrec){
         return getLeft().eval(actrec) == getRight().eval(actrec) ? 1 : 0;
     }
-    public int FunctionCall.eval(ActivationRecord actrec){        
-        for (Expression e: getExpressions()){
-            System.out.println(e.eval(actrec));
+    public int FunctionCall.eval(ActivationRecord actrec){  
+        Function f = getIdUse().decl().function();
+        String[] arguments = new String[f.getNumArguments()];
+        for (int i = 0; i < Integer.valueOf(f.getNumArguments()); i++){
+            arguments[i] = f.getArgument(i).getIdDecl().getId();
         }
-        return 0;
+        //using the variables thing attatch argument ids to the values of the expressions
+        ActivationRecord fcactrec = new ActivationRecord();
+        for (Expression e: getExpressions()){
+            int i = 0;
+            fcactrec.put(arguments[i], e.eval(actrec));
+            i++;
+        }
+        return f.eval(fcactrec);
     }
     public int Parenthesis.eval(ActivationRecord actrec){
         return getExpression().eval(actrec);

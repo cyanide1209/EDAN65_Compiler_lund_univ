@@ -1,0 +1,7 @@
+int add(int a, int b) {
+    return a + b;
+}
+int main() {
+    int i = 10;
+    print(add(i, 20)); // Call with 2 arguments: first value of i, second value 20.
+}
