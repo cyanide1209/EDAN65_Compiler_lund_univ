@@ -25,7 +25,7 @@ aspect Interpreter {
 	}
     public void Program.eval(){
         for (Function f: getFunctions()){
-            if(f.getIdDecl().lookup("main") != unknownDecl()){
+            if(f.getIdDecl().getID().equals("main")){
                 f.eval(create());
             }
             else{
@@ -42,23 +42,26 @@ aspect Interpreter {
                 s.eval(actrec);
             }
         }
-        return 0;
+        return -1;
     }
     abstract public void Statement.eval(ActivationRecord actrec);
 
     public void Declaration.eval(ActivationRecord actrec){
         if(hasExpression()){
-            System.out.println(getExpression().eval(actrec));
+            actrec.put(getIdDecl().getID(), getExpression().eval(actrec));
+        }
+        else{
+            actrec.put(getIdDecl().getID(), 0);
         }
     }
     public void Binding.eval(ActivationRecord actrec){
-        System.out.println(getExpression().eval(actrec));
+        actrec.put(getIdUse().getID(), getExpression().eval(actrec));
     }
     public void ReturnState.eval(ActivationRecord actrec){
-
+        System.out.println("return");
     }
     public void FunctionCallStmt.eval(ActivationRecord actrec){
-        if (getFunctionCall().getIdUse().lookup("print")!=unknownDecl()){
+        if (getFunctionCall().getIdUse().getID().equals("print")){
             for (Expression e: getFunctionCall().getExpressions()){
                 System.out.println(e.eval(actrec));
             }
@@ -133,9 +136,9 @@ aspect Interpreter {
     }
     public int FunctionCall.eval(ActivationRecord actrec){  
         Function f = getIdUse().decl().function();
-        String[] arguments = new String[f.getNumArguments()];
-        for (int i = 0; i < Integer.valueOf(f.getNumArguments()); i++){
-            arguments[i] = f.getArgument(i).getIdDecl().getId();
+        String[] arguments = new String[f.getNumArgument()];
+        for (int i = 0; i < f.getNumArgument(); i++){
+            arguments[i] = f.getArgument(i).getIdDecl().getID();
         }
         //using the variables thing attatch argument ids to the values of the expressions
         ActivationRecord fcactrec = new ActivationRecord();
@@ -153,7 +156,7 @@ aspect Interpreter {
         return  -(getExpression().eval(actrec));
     }
     public int IdUse.eval(ActivationRecord actrec){
-        return 0;
+        return actrec.get(getID());
     }
     public int Nbr.eval(ActivationRecord actrec){
         return Integer.valueOf(getNUM());
