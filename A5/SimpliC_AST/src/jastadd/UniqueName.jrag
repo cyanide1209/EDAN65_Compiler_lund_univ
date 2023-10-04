@@ -1,0 +1,15 @@
+aspect UniqueName{
+    inh String IdDecl.UniqueID();
+    inh String Statement.UniqueID();
+
+    eq Function.getStatement(int i).UniqueID() = Integer.toString(i);
+
+    eq Declaration.getIdDecl().UniqueID() = UniqueID(); 
+    eq If.getStatement(int i).UniqueID() = UniqueID() + "_" + Integer.toString(i);
+    eq Else.getStatement(int i).UniqueID() = UniqueID() + "_" + Integer.toString(i);
+    eq While.getStatement(int i).UniqueID() = UniqueID() + "_" + Integer.toString(i);
+    
+    syn String IdDecl.UniqueName() = getID() + "_" + UniqueID();
+
+
+}

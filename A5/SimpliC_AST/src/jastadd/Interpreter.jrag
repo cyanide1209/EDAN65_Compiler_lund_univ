@@ -55,10 +55,10 @@ aspect Interpreter {
 
     public void Declaration.eval(ActivationRecord actrec){
         if(hasExpression()){
-            actrec.put(getIdDecl().getID(), getExpression().eval(actrec));
+            actrec.put(getIdDecl().UniqueName(), getExpression().eval(actrec));
         }
         else{
-            actrec.put(getIdDecl().getID(), 0);
+            actrec.put(getIdDecl().UniqueName(), 0);
         }
     }
     public void Binding.eval(ActivationRecord actrec){
