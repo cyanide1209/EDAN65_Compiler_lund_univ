@@ -2,10 +2,12 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.lang.Integer;
 import java.util.HashMap;
+import java.util.Scanner;
 
 aspect Interpreter {
     public class ActivationRecord {
         protected HashMap variableList;
+        Scanner sc = new Scanner(System.in);
 
 		public ActivationRecord() {
 			variableList = new HashMap();
@@ -18,10 +20,6 @@ aspect Interpreter {
 		public void put(String var, Integer val) {
 			variableList.put(var, val);
 		}
-
-        // public boolean returnval(){
-        //     return variableList.get("return") != null;
-        // }
     }
     
     protected ActivationRecord ASTNode.create() {
@@ -73,6 +71,15 @@ aspect Interpreter {
             for (Expression e: getFunctionCall().getExpressions()){
                 System.out.println(e.eval(actrec));
             }
+        }
+       else if(getFunctionCall().getIdUse().getID().equals("read")){
+    	    int value = 0;
+			try {
+                value = actrec.sc.nextInt();
+              } catch (Exception e) {
+                System.out.println("Invalid input");
+              }
+            System.out.println("Read: " + value);
         }
         else {
             getFunctionCall().eval(actrec);
@@ -153,15 +160,27 @@ aspect Interpreter {
         String[] arguments = new String[f.getNumArgument()];
         for (int i = 0; i < f.getNumArgument(); i++){
             arguments[i] = f.getArgument(i).getIdDecl().UniqueName();
+        if(getIdUse().getID().equals("read")){
+            int value = 0;
+            value = actrec.sc.nextInt();
+			System.out.println("Read: " + value);
+            return 0;
         }
-        //using the variables thing attatch argument ids to the values of the expressions
-        ActivationRecord fcactrec = create();
-        int i = 0;
-        for (Expression e: getExpressions()){
-            fcactrec.put(arguments[i], e.eval(actrec));
-            i++;
+        else {
+            Function f = getIdUse().decl().function();
+            String[] arguments = new String[f.getNumArgument()];
+            for (int i = 0; i < f.getNumArgument(); i++){
+                arguments[i] = f.getArgument(i).getIdDecl().getID();
+            }
+            //using the variables thing attatch argument ids to the values of the expressions
+            ActivationRecord fcactrec = create();
+            int i = 0;
+            for (Expression e: getExpressions()){
+                fcactrec.put(arguments[i], e.eval(actrec));
+                i++;
+            }
+            return f.eval(fcactrec);
         }
-        return f.eval(fcactrec);
     }
     public int Parenthesis.eval(ActivationRecord actrec){
         return getExpression().eval(actrec);

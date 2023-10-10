@@ -1,3 +1,5 @@
+import java.util.HashSet;
+
 aspect NameAnalysis {
 	// ID_DECL
 	inh IdDecl IdDecl.lookup(String name);
@@ -139,6 +141,36 @@ aspect NameAnalysis {
 	
 	eq Program.getChild().unknownFunction() = unknownFunction();
 	eq UnknownFunction.isUnknownFunction() = true;
+
+	// //enclosingFunction
+	// inh Function ASTNode.enclosingFunction();
+	// eq Program.getChild().enclosingFunction() = unknownFunction();
+	// eq FunctionCallStmt.getFunctionCall().enclosingFunction() = enclosingFunction();
+	// eq FunctionCall.getFunctionCall().enclosingFunction() = enclosingFunction();
+
+
+	//functionCalls
+	eq Function.getStatement().encloseLookup() = this;
+
+	inh Function FunctionCallStmt.encloseLookup();
+	syn Function FunctionCallStmt.enclosingFunction() = encloseLookup();
+	
+	coll HashSet<Function> Function.functionCalls() [new HashSet<Function>()] with add;	
+		FunctionCallStmt contributes getFunctionCall().getIdUse().decl().function()
+		to Function.functionCalls()	
+		for enclosingFunction();
+
+	//reachability
+	syn HashSet<Function> Function.reachableFunctions();
+	eq Function.reachableFunctions() {
+		HashSet<Function> reachableFunctions = new HashSet<Function>();
+		for (Function f : functionCalls()) {
+			// Function fc = f.getIdDecl().function();
+			reachableFunctions.add(f);
+			reachableFunctions.addAll(f.reachableFunctions());
+		}
+		return reachableFunctions;
+	}
 }
 aspect CircularDefinitions {
 	inh boolean IdUse.inExprOf(IdDecl decl);
