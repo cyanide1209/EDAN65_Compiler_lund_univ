@@ -29,9 +29,9 @@ public class Interpreter {
 			LangParser parser = new LangParser();
 			Program program = (Program) parser.parse(scanner);
             DrAST_root_node = program; //Enable debugging with DrAST
-			System.out.println(program.dumpTree());
-			System.out.println(String.valueOf(MSN.maximum(program)));
-			program.prettyPrint(System.out);
+			//System.out.println(program.dumpTree());
+			//System.out.println(String.valueOf(MSN.maximum(program)));
+			//program.prettyPrint(System.out);
 
 			if (!program.errors().isEmpty()) {
 				System.err.println();
@@ -41,7 +41,7 @@ public class Interpreter {
 				}
 				System.exit(1);
 			}
-			System.out.println("No errors found.");
+			//System.out.println("No errors found.");
             program.eval();
             DrAST_root_node = program; 
 		} catch (FileNotFoundException e) {
