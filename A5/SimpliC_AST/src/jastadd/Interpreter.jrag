@@ -60,11 +60,10 @@ aspect Interpreter {
         }
     }
     public void Binding.eval(ActivationRecord actrec){
-        actrec.put(getIdUse().getID(), getExpression().eval(actrec));
+        actrec.put(getIdUse().decl().UniqueName(), getExpression().eval(actrec));
     }
     public void ReturnState.eval(ActivationRecord actrec){
         actrec.put("return", getExpression().eval(actrec));
-        //System.out.println("returning " + actrec.get("return"));
     }
     public void FunctionCallStmt.eval(ActivationRecord actrec){
         if (getFunctionCall().getIdUse().getID().equals("print")){
@@ -79,7 +78,7 @@ aspect Interpreter {
               } catch (Exception e) {
                 System.out.println("Invalid input");
               }
-            System.out.println("Read: " + value);
+            //System.out.println("Read: " + value);
         }
         else {
             getFunctionCall().eval(actrec);
@@ -89,7 +88,7 @@ aspect Interpreter {
         if (getExpression().eval(actrec)==1){
             for (Statement s: getStatements()){
                 s.eval(actrec);
-                if(actrec.get("return") != 0){
+                if(actrec.get("return") != null){
                     return;
                 }
             }
@@ -99,10 +98,10 @@ aspect Interpreter {
         }
     }
     public void While.eval(ActivationRecord actrec){
-        if (getExpression().eval(actrec)==1){
+        while (getExpression().eval(actrec)==1){
             for (Statement s: getStatements()){
                 s.eval(actrec);
-                if(actrec.get("return") != 0){
+                if(actrec.get("return") != null){
                     return;
                 }
             }
@@ -157,27 +156,17 @@ aspect Interpreter {
     }
     public int FunctionCall.eval(ActivationRecord actrec){  
         Function f = getIdUse().decl().function();
-        String[] arguments = new String[f.getNumArgument()];
-        for (int i = 0; i < f.getNumArgument(); i++){
-            arguments[i] = f.getArgument(i).getIdDecl().UniqueName();
         if(getIdUse().getID().equals("read")){
             int value = 0;
             value = actrec.sc.nextInt();
-			System.out.println("Read: " + value);
-            return 0;
+            //System.out.println("Read: " + value);
+            return value;
         }
         else {
-            Function f = getIdUse().decl().function();
-            String[] arguments = new String[f.getNumArgument()];
-            for (int i = 0; i < f.getNumArgument(); i++){
-                arguments[i] = f.getArgument(i).getIdDecl().getID();
-            }
             //using the variables thing attatch argument ids to the values of the expressions
             ActivationRecord fcactrec = create();
-            int i = 0;
-            for (Expression e: getExpressions()){
-                fcactrec.put(arguments[i], e.eval(actrec));
-                i++;
+            for (int i = 0; i < f.getNumArgument(); i++){
+                fcactrec.put(f.getArgument(i).getIdDecl().UniqueName(), getExpression(i).eval(actrec));
             }
             return f.eval(fcactrec);
         }
