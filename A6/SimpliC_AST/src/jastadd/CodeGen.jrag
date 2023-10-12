@@ -1,19 +1,11 @@
-aspect CodeGen {
 public void Program.genCode(PrintStream out) {
     out.println(".global _start");
     // etc.
     out.println(".data");
-    out.println("buf: .skip 1024");
-    out.println();
     out.println(".text");
     out.println("_start:");
-    
     // call main function
-<<<<<<< HEAD
-    out.println("call main");
-=======
     out.println("        call main");
->>>>>>> 6c10366 (program)
 
     // call sys_exit
     out.println("        movq $0, %rdi");
@@ -134,10 +126,6 @@ public void Program.genCode(PrintStream out) {
 }
 
 public void Function.genCode(PrintStream out) {
-<<<<<<< HEAD
-}
-}
-=======
     out.println("# Function " + getIdDecl());
     // out.println("# C signature: " + getSignature());
     out.println(getIdDecl() + ":");
@@ -182,4 +170,3 @@ public void ReturnState.genCode(PrintStream out){
 public void FunctionCallStmt.genCode(PrintStream out){
 
 }
->>>>>>> 6c10366 (program)
