@@ -1,0 +1,6 @@
+int main() {
+    print(1+2*3);
+    print(10);
+    int a = 10;
+    return a;
+}

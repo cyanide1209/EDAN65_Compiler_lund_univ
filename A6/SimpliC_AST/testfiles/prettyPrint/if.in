@@ -1,0 +1,24 @@
+int a(){
+    int x = 6;
+    if(x==7){
+        int z = 5;
+        if(z+2 != 7){
+
+        }
+        if(x < z+5){
+            
+        }
+        else{
+            x=B(x,1,z+5);
+        }
+    }
+    while(x==7){
+        int z = 5;
+        while(z+2 != 7){
+
+        }
+        while(x < z+5){
+            
+        }
+    }
+}

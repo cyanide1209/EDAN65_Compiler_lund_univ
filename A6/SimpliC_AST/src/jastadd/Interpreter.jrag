@@ -1,0 +1,180 @@
+import java.util.Set;
+import java.util.TreeSet;
+import java.lang.Integer;
+import java.util.HashMap;
+import java.util.Scanner;
+
+aspect Interpreter {
+    public class ActivationRecord {
+        protected HashMap variableList;
+        Scanner sc = new Scanner(System.in);
+
+		public ActivationRecord() {
+			variableList = new HashMap();
+		}
+
+        public Integer get(String var) {
+			return (Integer) variableList.get(var);
+		}
+
+		public void put(String var, Integer val) {
+			variableList.put(var, val);
+		}
+    }
+    
+    protected ActivationRecord ASTNode.create() {
+		return new ActivationRecord();
+	}
+    public void Program.eval(){
+        for (Function f: getFunctions()){
+            if(f.getIdDecl().getID().equals("main")){
+                f.eval(create());
+                return;
+            }
+        }
+        throw new RuntimeException("no main function");
+    }
+    public int Function.eval(ActivationRecord actrec){
+        for (Statement s: getStatements()){
+            s.eval(actrec);
+            if(actrec.get("return") != null){
+                return actrec.get("return");
+            }
+        }
+        return 0;
+    }
+    abstract public void Statement.eval(ActivationRecord actrec);
+
+    public void Declaration.eval(ActivationRecord actrec){
+        if(hasExpression()){
+            actrec.put(getIdDecl().UniqueName(), getExpression().eval(actrec));
+        }
+        else{
+            actrec.put(getIdDecl().UniqueName(), 0);
+        }
+    }
+    public void Binding.eval(ActivationRecord actrec){
+        actrec.put(getIdUse().decl().UniqueName(), getExpression().eval(actrec));
+    }
+    public void ReturnState.eval(ActivationRecord actrec){
+        actrec.put("return", getExpression().eval(actrec));
+    }
+    public void FunctionCallStmt.eval(ActivationRecord actrec){
+        if (getFunctionCall().getIdUse().getID().equals("print")){
+            for (Expression e: getFunctionCall().getExpressions()){
+                System.out.println(e.eval(actrec));
+            }
+        }
+       else if(getFunctionCall().getIdUse().getID().equals("read")){
+    	    int value = 0;
+			try {
+                value = actrec.sc.nextInt();
+              } catch (Exception e) {
+                System.out.println("Invalid input");
+              }
+            //System.out.println("Read: " + value);
+        }
+        else {
+            getFunctionCall().eval(actrec);
+        }
+    }
+    public void If.eval(ActivationRecord actrec){
+        if (getExpression().eval(actrec)==1){
+            for (Statement s: getStatements()){
+                s.eval(actrec);
+                if(actrec.get("return") != null){
+                    return;
+                }
+            }
+        }
+        else if (hasElse()){
+            getElse().eval(actrec);
+        }
+    }
+    public void While.eval(ActivationRecord actrec){
+        while (getExpression().eval(actrec)==1){
+            for (Statement s: getStatements()){
+                s.eval(actrec);
+                if(actrec.get("return") != null){
+                    return;
+                }
+            }
+        }
+    }
+    public void Else.eval(ActivationRecord actrec){
+        for (Statement s: getStatements()){
+            s.eval(actrec);
+        }
+    }
+    
+    abstract int Expression.eval(ActivationRecord actrec);
+
+    public int BinaryExpression.eval(ActivationRecord actrec){
+        return 0;
+    }
+    public int Sum.eval(ActivationRecord actrec){
+        return getLeft().eval(actrec) + getRight().eval(actrec);
+    } 
+    public int Sub.eval(ActivationRecord actrec){
+        return getLeft().eval(actrec) - getRight().eval(actrec);
+    }
+    public int Mul.eval(ActivationRecord actrec){
+        return getLeft().eval(actrec) * getRight().eval(actrec);
+    }
+    public int Div.eval(ActivationRecord actrec){
+        return getLeft().eval(actrec) / getRight().eval(actrec);
+    }
+    public int Mod.eval(ActivationRecord actrec){
+        return getLeft().eval(actrec) % getRight().eval(actrec);
+    }
+    public int Comparison.eval(ActivationRecord actrec){
+        return 0;
+    }
+    public int LessThan.eval(ActivationRecord actrec){
+        return getLeft().eval(actrec) < getRight().eval(actrec) ? 1 : 0;
+    }
+    public int LessThanEqual.eval(ActivationRecord actrec){
+        return getLeft().eval(actrec) <= getRight().eval(actrec) ? 1 : 0;
+    }
+    public int GreaterThan.eval(ActivationRecord actrec){
+        return getLeft().eval(actrec) > getRight().eval(actrec) ? 1 : 0;
+    }
+    public int GreaterThanEqual.eval(ActivationRecord actrec){
+        return getLeft().eval(actrec) >= getRight().eval(actrec) ? 1 : 0;
+    }
+    public int NotEquals.eval(ActivationRecord actrec){
+        return getLeft().eval(actrec) != getRight().eval(actrec) ? 1 : 0;
+    }
+    public int Equals.eval(ActivationRecord actrec){
+        return getLeft().eval(actrec) == getRight().eval(actrec) ? 1 : 0;
+    }
+    public int FunctionCall.eval(ActivationRecord actrec){  
+        Function f = getIdUse().decl().function();
+        if(getIdUse().getID().equals("read")){
+            int value = 0;
+            value = actrec.sc.nextInt();
+            //System.out.println("Read: " + value);
+            return value;
+        }
+        else {
+            //using the variables thing attatch argument ids to the values of the expressions
+            ActivationRecord fcactrec = create();
+            for (int i = 0; i < f.getNumArgument(); i++){
+                fcactrec.put(f.getArgument(i).getIdDecl().UniqueName(), getExpression(i).eval(actrec));
+            }
+            return f.eval(fcactrec);
+        }
+    }
+    public int Parenthesis.eval(ActivationRecord actrec){
+        return getExpression().eval(actrec);
+    }
+    public int Minus.eval(ActivationRecord actrec){
+        return  -(getExpression().eval(actrec));
+    }
+    public int IdUse.eval(ActivationRecord actrec){
+        return actrec.get(decl().UniqueName());
+    }
+    public int Nbr.eval(ActivationRecord actrec){
+        return Integer.valueOf(getNUM());
+    }
+}

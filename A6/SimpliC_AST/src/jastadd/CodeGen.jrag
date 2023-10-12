@@ -1,0 +1,11 @@
+public void Program.genCode(PrintStream out) {
+    out.println(".global _start");
+    // etc.
+    out.println("_start:");
+    // call main function
+    // call sys_exit
+    // helper procedures (print/read)
+    for (Function f: getFunctions()) {
+        f.genCode(out);
+    }
+}

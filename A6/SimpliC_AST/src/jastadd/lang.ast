@@ -1,0 +1,47 @@
+Program ::= Function*;
+
+Function ::= IdDecl Argument* Statement*;
+Argument ::= IdDecl;
+
+abstract Type;
+IntType: Type;
+BoolType: Type;
+UnknownType: Type;
+
+abstract Statement;
+Binding:Statement ::= IdUse Expression;
+Declaration:Statement ::= IdDecl [Expression];
+ReturnState:Statement ::= Expression;
+FunctionCallStmt:Statement ::= FunctionCall;
+If:Statement ::= Expression Statement* [Else];
+Else:Statement ::= Statement*;
+While:Statement ::= Expression Statement*;
+
+IdDecl ::= <ID>;
+
+abstract Expression;
+Comparison:Expression ::= Left:Expression Right:Expression;
+LessThan:Comparison;
+LessThanEqual:Comparison;
+GreaterThan:Comparison;
+GreaterThanEqual:Comparison;
+Equals:Comparison;
+NotEquals:Comparison;
+
+BinaryExpression:Expression ::= Left:Expression Right:Expression;
+Sum:BinaryExpression;
+Sub:BinaryExpression;
+Mul:BinaryExpression;
+Div:BinaryExpression;
+Mod:BinaryExpression;
+
+
+FunctionCall:Expression ::= IdUse Expression*;
+Minus:Expression ::= Expression;
+Parenthesis:Expression ::= Expression;
+IdUse:Expression ::= <ID>;
+Nbr:Expression ::= <NUM>;
+
+UnknownDecl:IdDecl;
+UnknownFunction:Function;
+
