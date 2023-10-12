@@ -29,22 +29,16 @@ aspect Interpreter {
         for (Function f: getFunctions()){
             if(f.getIdDecl().getID().equals("main")){
                 f.eval(create());
-            }
-            else{
-                f.eval(null);
+                return;
             }
         }
+        throw new RuntimeException("no main function");
     }
     public int Function.eval(ActivationRecord actrec){
-        if (lookup("main") == unknownDecl()){
-            throw new RuntimeException("no main function");
-        }
-        else if(actrec != null){
-            for (Statement s: getStatements()){
-                s.eval(actrec);
-                if(actrec.get("return") != null){
-                    return actrec.get("return");
-                }
+        for (Statement s: getStatements()){
+            s.eval(actrec);
+            if(actrec.get("return") != null){
+                return actrec.get("return");
             }
         }
         return 0;

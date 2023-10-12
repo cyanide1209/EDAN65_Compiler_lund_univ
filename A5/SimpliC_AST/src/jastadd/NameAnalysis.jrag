@@ -152,17 +152,16 @@ aspect NameAnalysis {
 	//functionCalls
 	eq Function.getStatement().encloseLookup() = this;
 
-	inh Function FunctionCallStmt.encloseLookup();
-	syn Function FunctionCallStmt.enclosingFunction() = encloseLookup();
+	inh Function FunctionCall.encloseLookup();
+	syn Function FunctionCall.enclosingFunction() = encloseLookup();
 	
 	coll HashSet<Function> Function.functionCalls() [new HashSet<Function>()] with add;	
-		FunctionCallStmt contributes getFunctionCall().getIdUse().decl().function()
+		FunctionCall contributes getIdUse().decl().function()
 		to Function.functionCalls()	
 		for enclosingFunction();
 
 	//reachability
-	syn HashSet<Function> Function.reachableFunctions();
-	eq Function.reachableFunctions() {
+	syn HashSet<Function> Function.reachableFunctions() circular [new HashSet<Function>()]{
 		HashSet<Function> reachableFunctions = new HashSet<Function>();
 		for (Function f : functionCalls()) {
 			// Function fc = f.getIdDecl().function();
