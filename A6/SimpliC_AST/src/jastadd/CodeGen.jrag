@@ -9,7 +9,11 @@ public void Program.genCode(PrintStream out) {
     out.println("_start:");
     
     // call main function
+<<<<<<< HEAD
     out.println("call main");
+=======
+    out.println("        call main");
+>>>>>>> 6c10366 (program)
 
     // call sys_exit
     out.println("        movq $0, %rdi");
@@ -130,5 +134,52 @@ public void Program.genCode(PrintStream out) {
 }
 
 public void Function.genCode(PrintStream out) {
+<<<<<<< HEAD
 }
 }
+=======
+    out.println("# Function " + getIdDecl());
+    // out.println("# C signature: " + getSignature());
+    out.println(getIdDecl() + ":");
+    out.println("        pushq %rbp");
+    out.println("        movq %rsp, %rbp");
+    // out.println("        subq $" + getLocalSpace() + ", %rsp");
+    for (int i = 0; i < getNumArgument(); i++) {
+        out.println("        movq " + (16 + 8 * i) + "(%rbp), %rax");
+        out.println("        movq %rax, " + (-8 * (i + 1)) + "(%rbp)");
+    }
+    for (Statement s: getStatements()) {
+        s.genCode(out);
+    }
+    out.println("        movq $0, %rax");
+    out.println("        leave");
+    out.println("        ret");
+    out.println();
+}
+
+abstract public void Statement.genCode(PrintStream out);
+
+public void Binding.genCode(PrintStream out){
+    getExpression().genCode(out);
+    out.println("        movq %rax, " + getIdUse().decl().address());"
+}
+
+public void Declaration.genCode(PrintStream out){
+    if(hasExpression()){
+        getExpression().genCode(out);
+        out.println("        movq %rax, " + getIdDecl().address());"
+    }
+    else {
+        out.println("        movq $0, " + getIdDecl().address());"
+    }
+}
+
+public void ReturnState.genCode(PrintStream out){
+    getExpression().genCode(out);
+    out.println("        movq %rax, %rbp");
+}
+
+public void FunctionCallStmt.genCode(PrintStream out){
+
+}
+>>>>>>> 6c10366 (program)
