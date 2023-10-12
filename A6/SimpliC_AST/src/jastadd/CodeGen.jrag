@@ -1,10 +1,15 @@
+aspect CodeGen {
 public void Program.genCode(PrintStream out) {
     out.println(".global _start");
     // etc.
     out.println(".data");
+    out.println("buf: .skip 1024");
+    out.println();
     out.println(".text");
     out.println("_start:");
+    
     // call main function
+    out.println("call main");
 
     // call sys_exit
     out.println("        movq $0, %rdi");
@@ -125,4 +130,5 @@ public void Program.genCode(PrintStream out) {
 }
 
 public void Function.genCode(PrintStream out) {
+}
 }
