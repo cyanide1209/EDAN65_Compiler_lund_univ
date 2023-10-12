@@ -1,11 +1,128 @@
 public void Program.genCode(PrintStream out) {
     out.println(".global _start");
     // etc.
+    out.println(".data");
+    out.println(".text");
     out.println("_start:");
     // call main function
+
     // call sys_exit
+    out.println("        movq $0, %rdi");
+    out.println("        movq $60, %rax");
+    out.println("        syscall");
+    
     // helper procedures (print/read)
+    out.println("# Procedure to print number to stdout.");
+    out.println("# C signature: void print(long int)");
+    out.println("print:");
+    out.println("        pushq %rbp");
+    out.println("        movq %rsp, %rbp");
+    out.println("        ### Convert integer to string (itoa).");
+    out.println("        movq 16(%rbp), %rax");
+    out.println("        leaq buf(%rip), %rsi    # RSI = write pointer (starts at end of buffer)");
+    out.println("        addq $1023, %rsi");
+    out.println("        movb $0x0A, (%rsi)      # insert newline");
+    out.println("        movq $1, %rcx           # RCX = string length");
+    out.println("        cmpq $0, %rax");
+    out.println("        jge itoa_loop");
+    out.println("        negq %rax               # negate to make RAX positive");
+    out.println("itoa_loop:                      # do.. while (at least one iteration)");
+    out.println("        movq $10, %rdi");
+    out.println("        cqo                     # sign extend RAX to RDX to prepare for idiv");
+    out.println("        idivq %rdi              # divide RDX:RAX by 10");
+    out.println("        addb $0x30, %dl         # remainder + '0'");
+    out.println("        decq %rsi               # move string pointer");
+    out.println("        movb %dl, (%rsi)");
+    out.println("        incq %rcx               # increment string length");
+    out.println("        cmpq $0, %rax");
+    out.println("        jg itoa_loop            # produce more digits");
+    out.println("itoa_done:");
+    out.println("        movq 16(%rbp), %rax");
+    out.println("        cmpq $0, %rax");
+    out.println("        jge print_end");
+    out.println("        decq %rsi");
+    out.println("        incq %rcx");
+    out.println("        movb $0x2D, (%rsi)");
+    out.println("print_end:");
+    out.println("        movq $1, %rdi");
+    out.println("        movq %rcx, %rdx");
+    out.println("        movq $1, %rax");
+    out.println("        syscall");
+    out.println("        popq %rbp");
+    out.println("        ret");
+    out.println("");
+    out.println("# Procedure to read number from stdin.");
+    out.println("# C signature: long long int read(void)");
+    out.println("read:");
+    out.println("        pushq %rbp");
+    out.println("        movq %rsp, %rbp");
+    out.println("        ### R9  = sign");
+    out.println("        movq $1, %r9            # sign <- 1");
+    out.println("        ### R10 = sum");
+    out.println("        movq $0, %r10           # sum <- 0");
+    out.println("skip_ws: # skip any leading whitespace");
+    out.println("        movq $0, %rdi");
+    out.println("        leaq buf(%rip), %rsi");
+    out.println("        movq $1, %rdx");
+    out.println("        movq $0, %rax");
+    out.println("        syscall                 # get one char: sys_read(0, buf, 1)");
+    out.println("        cmpq $0, %rax");
+    out.println("        jle atoi_done           # nchar <= 0");
+    out.println("        movb (%rsi), %cl        # c <- current char");
+    out.println("        cmp $32, %cl");
+    out.println("        je skip_ws              # c == space");
+    out.println("        cmp $13, %cl");
+    out.println("        je skip_ws              # c == CR");
+    out.println("        cmp $10, %cl");
+    out.println("        je skip_ws              # c == NL");
+    out.println("        cmp $9, %cl");
+    out.println("        je skip_ws              # c == tab");
+    out.println("        cmp $45, %cl            # check if negative");
+    out.println("        jne atoi_loop");
+    out.println("        movq $-1, %r9           # sign <- -1");
+    out.println("        movq $0, %rdi");
+    out.println("        leaq buf(%rip), %rsi");
+    out.println("        movq $1, %rdx");
+    out.println("        movq $0, %rax");
+    out.println("        syscall                 # get one char: sys_read(0, buf, 1)");
+    out.println("atoi_loop:");
+    out.println("        cmpq $0, %rax           # while (nchar > 0)");
+    out.println("        jle atoi_done           # leave loop if nchar <= 0");
+    out.println("        movzbq (%rsi), %rcx     # move byte, zero extend to quad-word");
+    out.println("        cmpq $0x30, %rcx        # test if < '0'");
+    out.println("        jl atoi_done            # character is not numeric");
+    out.println("        cmpq $0x39, %rcx        # test if > '9'");
+    out.println("        jg atoi_done            # character is not numeric");
+    out.println("        imulq $10, %r10         # multiply sum by 10");
+    out.println("        subq $0x30, %rcx        # value of character");
+    out.println("        addq %rcx, %r10         # add to sum");
+    out.println("        movq $0, %rdi");
+    out.println("        leaq buf(%rip), %rsi");
+    out.println("        movq $1, %rdx");
+    out.println("        movq $0, %rax");
+    out.println("        syscall                 # get one char: sys_read(0, buf, 1)");
+    out.println("        jmp atoi_loop           # loop back");
+    out.println("atoi_done:");
+    out.println("        imulq %r9, %r10         # sum *= sign");
+    out.println("        movq %r10, %rax         # put result value in RAX");
+    out.println("        popq %rbp");
+    out.println("        ret");
+    out.println();
+    out.println("print_string:");
+    out.println("        pushq %rbp");
+    out.println("        movq %rsp, %rbp");
+    out.println("        movq $1, %rdi");
+    out.println("        movq 16(%rbp), %rsi");
+    out.println("        movq 24(%rbp), %rdx");
+    out.println("        movq $1, %rax");
+    out.println("        syscall");
+    out.println("        popq %rbp");
+    out.println("        ret");
+
     for (Function f: getFunctions()) {
         f.genCode(out);
     }
+}
+
+public void Function.genCode(PrintStream out) {
 }
