@@ -168,5 +168,104 @@ public void ReturnState.genCode(PrintStream out){
 }
 
 public void FunctionCallStmt.genCode(PrintStream out){
-
+    getFunctionCall.genCode(out);
 }
+
+public void If.genCode(PrintStream out){
+    getExpression().genCode(out);
+    out.print("else"+ uniqueID() + "\n");
+    out.println("if" + uniqueID() + ":");
+    for (Statement s: getStatements()) {
+        s.genCode(out);
+    }
+    out.println("       jmp fi" + uniqueID());
+    out.println("else" + uniqueID() + ":");
+    if(hasElse()){
+        getElse().genCode(out);
+    }
+    out.println("fi" + uniqueID() + ":")
+}
+
+public void While.genCode(PrintStream out){
+    out.println("while" + uniqueID() + ":");
+    getExpression().genCode(out);
+    out.print("end"+ uniqueID() + "\n");
+    for (Statement s: getStatements()) {
+        s.genCode(out);
+    }
+    out.println("       jmp while" + uniqueID());
+    out.println("fi" + uniqueID() + ":")
+}
+
+public void Else.genCode(PrintStream out){
+    for (Statement s: getStatements()) {
+        s.genCode(out);
+    }
+}
+
+abstract public void Expression.genCode(PrintStream out);
+
+public void FunctionCall.genCode(PrintStream out){
+    //only need to push and pop registers for new arguments
+}
+
+public void Equals.genEval(PrintStream out) {
+    getLeft().genEval(out);
+    out.println("        pushq %rax");
+    getRight().genEval(out);
+    out.println("        movq %rax, %rbx");
+    out.println("        popq %rax");
+    out.println("        cmpq %rbx, %rax");
+    out.print("       jne ");
+}
+
+public void NotEquals.genEval(PrintStream out) {
+    getLeft().genEval(out);
+    out.println("        pushq %rax");
+    getRight().genEval(out);
+    out.println("        movq %rax, %rbx");
+    out.println("        popq %rax");
+    out.println("        cmpq %rbx, %rax");
+    out.print("       je ");
+}
+
+public void GreaterThan.genEval(PrintStream out) {
+    getLeft().genEval(out);
+    out.println("        pushq %rax");
+    getRight().genEval(out);
+    out.println("        movq %rax, %rbx");
+    out.println("        popq %rax");
+    out.println("        cmpq %rbx, %rax");
+    out.print("       jle ");
+}
+
+public void GreaterThanEqual.genEval(PrintStream out) {
+    getLeft().genEval(out);
+    out.println("        pushq %rax");
+    getRight().genEval(out);
+    out.println("        movq %rax, %rbx");
+    out.println("        popq %rax");
+    out.println("        cmpq %rbx, %rax");
+    out.print("       jl ");
+}
+
+public void LessThan.genEval(PrintStream out) {
+    getLeft().genEval(out);
+    out.println("        pushq %rax");
+    getRight().genEval(out);
+    out.println("        movq %rax, %rbx");
+    out.println("        popq %rax");
+    out.println("        cmpq %rbx, %rax");
+    out.print("       jge ");
+}
+
+public void LessThanEqual.genEval(PrintStream out) {
+    getLeft().genEval(out);
+    out.println("        pushq %rax");
+    getRight().genEval(out);
+    out.println("        movq %rax, %rbx");
+    out.println("        popq %rax");
+    out.println("        cmpq %rbx, %rax");
+    out.print("       jg ");
+}
+
