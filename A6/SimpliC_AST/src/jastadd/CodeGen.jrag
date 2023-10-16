@@ -3,6 +3,7 @@ aspect CodeGen{
         out.println(".global _start");
         // etc.
         out.println(".data");
+        out.println("buf: .skip 1024");
         out.println(".text");
         out.println("_start:");
         // call main function
@@ -127,12 +128,12 @@ aspect CodeGen{
     }
 
     public void Function.genCode(PrintStream out) {
-        out.println("# Function " + getIdDecl());
+        //out.println("# Function " + getIdDecl());
         // out.println("# C signature: " + getSignature());
-        out.println(getIdDecl() + ":");
+        out.println(getIdDecl().getID() + ":");
         out.println("        pushq %rbp");
         out.println("        movq %rsp, %rbp");
-        // out.println("        subq $" + getLocalSpace() + ", %rsp");
+        out.println("        subq $" + (getStatements().numLocals() * 8) + ", %rsp");
         for (int i = 0; i < getNumArgument(); i++) {
             out.println("        movq " + (16 + 8 * i) + "(%rbp), %rax");
             out.println("        movq %rax, " + (-8 * (i + 1)) + "(%rbp)");
@@ -206,19 +207,21 @@ aspect CodeGen{
 
     abstract public void Expression.genCode(PrintStream out);
 
-    abstract public void BinaryExpression.genCode(PrintStream out);
+    public void BinaryExpression.genCode(PrintStream out){
+    }
 
-    abstract public void Comparison.genCode(PrintStream out);
+    public void Comparison.genCode(PrintStream out){
+    }
 
     public void FunctionCall.genCode(PrintStream out){
-        for(int i = getNumArgument() - 1; i >= 0; i--) {
-            getArguments(i).genEval(out);
+        for(Expression e : getExpressions()) {
+            e.genCode(out);
             out.println("        pushq %rax");
         }
 
-        out.println("        call " + getName().getID());
+        out.println("        call " + getIdUse().getID());
 
-        for(int i = getNumArgument() - 1; i >= 0; i--) {
+        for(Expression e : getExpressions()) {
             out.println("        popq %rbx");
         }
     }
@@ -345,16 +348,24 @@ aspect CodeGen{
     }
     
     public void IdUse.genCode(PrintStream out){
+        out.println("\t movq " + getID() + ", %rax");
+    }
+
+    public void IdDecl.genCode(PrintStream out){
         out.println("\t movq " + UniqueName() + ", %rax");
     }
 
+  syn String IdDecl.address() = "-"+(localIndex()*8)+"(%rbp)";
 
+  syn int ASTNode.numLocals() = lastNode().localIndex() - localIndex();
 
+  syn int ASTNode.localIndex() = prevNode().localIndex();
+  eq Function.localIndex() = 0;
+  eq IdDecl.localIndex() = prevNode().localIndex() + 1;
 
-
-
-
-
-
+  inh ASTNode ASTNode.prevNode();
+  eq ASTNode.getChild(int i).prevNode() = prevNode(i);
+  syn ASTNode ASTNode.lastNode() = prevNode(getNumChild());
+  syn ASTNode ASTNode.prevNode(int i) = i>0 ? getChild(i-1).lastNode() : this;
 
 }
