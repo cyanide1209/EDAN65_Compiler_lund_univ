@@ -128,15 +128,12 @@ aspect CodeGen{
     }
 
     public void Function.genCode(PrintStream out) {
-        //out.println("# Function " + getIdDecl());
-        // out.println("# C signature: " + getSignature());
         out.println(getIdDecl().getID() + ":");
         out.println("        pushq %rbp");
         out.println("        movq %rsp, %rbp");
         out.println("        subq $" + (getStatements().numLocals() * 8) + ", %rsp");
         for (int i = 0; i < getNumArgument(); i++) {
-            out.println("        movq " + (16 + 8 * i) + "(%rbp), %rax");
-            out.println("        movq %rax, " + (-8 * (i + 1)) + "(%rbp)");
+            out.println("        pushq " + getArgument(i).getIdDecl().UniqueName());    
         }
         for (Statement s: getStatements()) {
             s.genCode(out);
@@ -166,7 +163,13 @@ aspect CodeGen{
 
     public void ReturnState.genCode(PrintStream out){
         getExpression().genCode(out);
-        out.println("        movq %rax, %rbp");
+        for(int i = 0; i < getNumArgument(); i++){
+            out.println("        popq %rbx");
+        }
+
+        out.println("        addq $" + numLocals() * 8 + ", %rsp");
+        out.println("        popq %rbp");
+        out.println("        ret");
     }
 
     public void FunctionCallStmt.genCode(PrintStream out){
@@ -355,6 +358,9 @@ aspect CodeGen{
         out.println("\t movq " + UniqueName() + ", %rax");
     }
 
+  inh int Statement.getNumArgument();
+  eq Function.getStatement(int i).getNumArgument() = getNumArgument();
+  
   syn String IdDecl.address() = "-"+(localIndex()*8)+"(%rbp)";
 
   syn int ASTNode.numLocals() = lastNode().localIndex() - localIndex();
