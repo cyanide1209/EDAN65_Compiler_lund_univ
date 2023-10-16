@@ -211,7 +211,16 @@ aspect CodeGen{
     abstract public void Comparison.genCode(PrintStream out);
 
     public void FunctionCall.genCode(PrintStream out){
-        //only need to push and pop registers for new arguments
+        for(int i = getNumArgument() - 1; i >= 0; i--) {
+            getArguments(i).genEval(out);
+            out.println("        pushq %rax");
+        }
+
+        out.println("        call " + getName().getID());
+
+        for(int i = getNumArgument() - 1; i >= 0; i--) {
+            out.println("        popq %rbx");
+        }
     }
 
     public void Equals.genCode(PrintStream out) {
@@ -322,13 +331,22 @@ aspect CodeGen{
         out.println("        movq %rax, %rbx");
     }
 
-    abstract public void Minus.genCode(PrintStream out);
+    public void Minus.genCode(PrintStream out){
+        getExpression().genCode(out);
+        out.println("        negq %rax");
+    }
 
-    abstract public void Parenthesis.genCode(PrintStream out);
+    public void Parenthesis.genCode(PrintStream out){
+        getExpression().genCode(out);
+    }
 
-    abstract public void Nbr.genCode(PrintStream out);
+    public void Nbr.genCode(PrintStream out){
+        out.println("\t movq $" + getNUM() + ", %rax");
+    }
     
-    abstract public void IdUse.genCode(PrintStream out);
+    public void IdUse.genCode(PrintStream out){
+        out.println("\t movq " + UniqueName() + ", %rax");
+    }
 
 
 
