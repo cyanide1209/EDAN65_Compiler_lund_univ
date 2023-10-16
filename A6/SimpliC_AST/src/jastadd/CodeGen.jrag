@@ -274,15 +274,53 @@ aspect CodeGen{
         out.print("       jg ");
     }
 
-    abstract public void Sum.genCode(PrintStream out);
+    public void Sum.genCode(PrintStream out){
+        getLeft().genCode(out);
+        out.println("        pushq %rax");
+        getRight().genCode(out);
+        out.println("        movq %rax, %rbx");
+        out.println("        popq %rax");
+        out.println("        addq %rbx, %rax");
+    }
 
-    abstract public void Sub.genCode(PrintStream out);
+    public void Sub.genCode(PrintStream out){
+        getLeft().genCode(out);
+        out.println("        pushq %rax");
+        getRight().genCode(out);
+        out.println("        movq %rax, %rbx");
+        out.println("        popq %rax");
+        out.println("        subq %rbx, %rax");
+    }
 
-    abstract public void Mul.genCode(PrintStream out);
+    public void Mul.genCode(PrintStream out){
+        getLeft().genCode(out);
+        out.println("        pushq %rax");
+        getRight().genCode(out);
+        out.println("        movq %rax, %rbx");
+        out.println("        popq %rax");
+        out.println("        imulq %rbx, %rax");
+    }
 
-    abstract public void Div.genCode(PrintStream out);
+    public void Div.genCode(PrintStream out){
+        getLeft().genCode(out);
+        out.println("        pushq %rax");
+        getRight().genCode(out);
+        out.println("        movq %rax, %rbx");
+        out.println("        popq %rax");
+        out.println("        movqq %0, %rdx");
+        out.println("        idivq %rbx, %rdx");
+    }
 
-    abstract public void Mod.genCode(PrintStream out);
+    public void Mod.genCode(PrintStream out){
+        getLeft().genCode(out);
+        out.println("        pushq %rax");
+        getRight().genCode(out);
+        out.println("        movq %rax, %rbx");
+        out.println("        popq %rax");
+        out.println("        movqq %0, %rdx");
+        out.println("        idivq %rbx, %rdx");
+        out.println("        movq %rax, %rbx");
+    }
 
     abstract public void Minus.genCode(PrintStream out);
 
