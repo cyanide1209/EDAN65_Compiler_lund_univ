@@ -49,9 +49,9 @@ test {
 // Configuration for the generated Jar file.
 jar {
   // The Main-Class attribute specifies which class should be run when by java -jar compiler.jar.
-  manifest.attributes 'Main-Class': 'lang.Interpreter'
+  manifest.attributes 'Main-Class': 'lang.Compiler'
   destinationDirectory = projectDir  // Gradle by default puts the Jar in build/libs/.
-  archiveFileName = 'interpreter.jar'
+  archiveFileName = 'compiler.jar'
 
   // The following from-specification includes all dependencies in compiler.jar
   // so that it can be run as a separate program easily.
