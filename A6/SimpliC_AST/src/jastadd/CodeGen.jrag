@@ -206,6 +206,10 @@ aspect CodeGen{
 
     abstract public void Expression.genCode(PrintStream out);
 
+    abstract public void BinaryExpression.genCode(PrintStream out);
+
+    abstract public void Comparison.genCode(PrintStream out);
+
     public void FunctionCall.genCode(PrintStream out){
         //only need to push and pop registers for new arguments
     }
@@ -269,5 +273,32 @@ aspect CodeGen{
         out.println("        cmpq %rbx, %rax");
         out.print("       jg ");
     }
+
+    abstract public void Sum.genCode(PrintStream out);
+
+    abstract public void Sub.genCode(PrintStream out);
+
+    abstract public void Mul.genCode(PrintStream out);
+
+    abstract public void Div.genCode(PrintStream out);
+
+    abstract public void Mod.genCode(PrintStream out);
+
+    abstract public void Minus.genCode(PrintStream out);
+
+    abstract public void Parenthesis.genCode(PrintStream out);
+
+    abstract public void Nbr.genCode(PrintStream out);
+    
+    abstract public void IdUse.genCode(PrintStream out);
+
+
+
+
+
+
+
+
+
 
 }
