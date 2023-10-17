@@ -2,6 +2,8 @@ package lang;
 
 import static org.junit.Assert.assertEquals;
 
+import lang.ast.Program;
+import lang.ast.ErrorMessage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,6 +42,13 @@ public class TestCodeGeneration {
 
     assertEquals("[]", program.errors().toString());
 
+    StringBuilder sb = new StringBuilder();
+    for(ErrorMessage m : program.errors()){
+      sb.append(m).append("\n");
+    }
+
+  if (!program.errors().isEmpty()) {}
+  else{
     // Generate Assembly file.
     File assemblyFile = new File(TEST_DIRECTORY, Util.changeExtension(filename, ".s"));
     PrintStream out = new PrintStream(new FileOutputStream(assemblyFile));
@@ -70,6 +79,7 @@ public class TestCodeGeneration {
     Util.compareOutput(actual,
         new File(TEST_DIRECTORY, Util.changeExtension(filename, ".out")),
         new File(TEST_DIRECTORY, Util.changeExtension(filename, ".expected")));
+    }
   }
 
   private String execute(List<String> cmd) throws IOException, InterruptedException {
