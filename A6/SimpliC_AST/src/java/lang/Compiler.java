@@ -4,6 +4,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.FileOutputStream;
 
 import beaver.Parser.Exception;
 
@@ -11,6 +13,9 @@ import lang.ast.Program;
 import lang.ast.LangParser;
 import lang.ast.LangScanner;
 import lang.ast.ErrorMessage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Dumps the parsed Abstract Syntax Tree of a Calc program.
@@ -38,9 +43,34 @@ public class Compiler {
 			LangParser parser = new LangParser();
 			Program program = (Program) parser.parse(scanner);
             DrAST_root_node = program; //Enable debugging with DrAST
-			System.out.println(program.dumpTree());
-			System.out.println(String.valueOf(MSN.maximum(program)));
-			program.prettyPrint(System.out);
+
+			// // Generate Assembly file.
+			// File assemblyFile = new File(filename.substring(0, filename.length()-3) + ".s");
+			// PrintStream out = new PrintStream(new FileOutputStream(assemblyFile));
+			// program.genCode(out);
+			// out.close();
+
+			// // Generate object file.
+			// File objectFile = new File(filename.substring(0, filename.length()-3) + ".o");
+			// ArrayList<String> cmdAs = new ArrayList<String>();
+			// cmdAs.add("as");
+			// cmdAs.add("--gstabs");
+			// cmdAs.add(assemblyFile.getAbsolutePath());
+			// cmdAs.add("-o");
+			// cmdAs.add(objectFile.getAbsolutePath());
+			// //execute(cmdAs);
+
+			// // Link object file and generate executable file.
+			// File execFile = new File(filename.substring(0, filename.length()-3));
+			// ArrayList<String> cmdLd = new ArrayList<String>();
+			// cmdLd.add("ld");
+			// cmdLd.add(objectFile.getAbsolutePath());
+			// cmdLd.add("-o");
+			// cmdLd.add(execFile.getAbsolutePath());
+
+			//System.out.println(program.dumpTree());
+			//System.out.println(String.valueOf(MSN.maximum(program)));
+			//program.prettyPrint(System.out);
 			if (!program.errors().isEmpty()) {
 				System.err.println();
 				System.err.println("Errors: ");
@@ -49,7 +79,10 @@ public class Compiler {
 				}
 				System.exit(1);
 			}
-			System.out.println("No errors found.");
+			else {
+				program.genCode(System.out);
+			}
+			//System.out.println("No errors found.");
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found!");
 			System.exit(1);

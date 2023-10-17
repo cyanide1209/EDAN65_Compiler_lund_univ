@@ -2,7 +2,7 @@ aspect UniqueName{
     inh String IdDecl.UniqueID();
     inh String Statement.UniqueID();
 
-    eq Function.getStatement(int i).UniqueID() = Integer.toString(i);
+    eq Function.getStatement(int i).UniqueID() = getIdDecl().getID() + Integer.toString(i);
 
     eq Declaration.getIdDecl().UniqueID() = UniqueID(); 
     eq If.getStatement(int i).UniqueID() = UniqueID() + "_" + Integer.toString(i);

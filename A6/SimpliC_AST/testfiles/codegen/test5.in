@@ -1,7 +1,5 @@
+int f(int x) { return x; }
 int main() {
-  int a = 5;
-  int b = 6;
-  a = a + b;
-  read();
-  return a;
+  f(12321);
+  return 0;
 }

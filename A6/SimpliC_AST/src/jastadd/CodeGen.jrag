@@ -126,8 +126,6 @@ aspect CodeGen{
         out.println("        syscall");
         out.println("        popq %rbp");
         out.println("        ret");
-
-        
     }
 
     public void Function.genCode(PrintStream out) {
@@ -135,9 +133,7 @@ aspect CodeGen{
         out.println("        pushq %rbp");
         out.println("        movq %rsp, %rbp");
         out.println("        subq $" + (getStatements().numLocals() * 8) + ", %rsp");
-        for (int i = 0; i < getNumArgument(); i++) {
-            out.println("        pushq " + getArgument(i).getIdDecl().address());    
-        }
+        
         for (Statement s: getStatements()) {
             s.genCode(out);
         }
@@ -165,9 +161,6 @@ aspect CodeGen{
 
     public void ReturnState.genCode(PrintStream out){
         getExpression().genCode(out);
-        for(int i = 0; i < getNumArgument(); i++){
-            out.println("        popq %rbx");
-        }
 
         out.println("        addq $" + numLocals() * 8 + ", %rsp");
         out.println("        popq %rbp");
@@ -226,7 +219,7 @@ aspect CodeGen{
 
         out.println("        call " + getIdUse().getID());
 
-        for(Expression e : getExpressions()) {
+        for(int i = getIdUse().decl().function().getNumArgument() -1; i>=0; i--) {
             out.println("        popq %rbx");
         }
     }
@@ -349,22 +342,32 @@ aspect CodeGen{
     }
 
     public void Nbr.genCode(PrintStream out){
-        out.println("#NUM");
         out.println("        movq $" + getNUM() + ", %rax");
     }
     
     public void IdUse.genCode(PrintStream out){
-        out.println("\t movq " + decl().address() + ", %rax");
+        out.println("\tmovq " + decl().address() + ", %rax");
     }
 
     public void IdDecl.genCode(PrintStream out){
         out.println("\t movq " + address() + ", %rax");
     }
+  inh boolean IdDecl.isLocalVariable();
+  eq Program.getChild().isLocalVariable() = false;
+  eq Function.getStatement().isLocalVariable() = true;
+
 
   inh int Statement.getNumArgument();
   eq Function.getStatement(int i).getNumArgument() = getNumArgument();
   
-  syn String IdDecl.address() = "-"+(localIndex()*8)+"(%rbp)";
+  syn String IdDecl.address() {
+    if(isLocalVariable()){
+        return "-"+(localIndex()*8)+"(%rbp)";
+    }
+    else{
+        return 16 + (paramAddress()*8) +"(%rbp)";
+    }
+  }
 
   syn int ASTNode.numLocals() = lastNode().localIndex() - localIndex();
   inh int Statement.numLocals();
@@ -372,12 +375,18 @@ aspect CodeGen{
 
   syn int ASTNode.localIndex() = prevNode().localIndex();
   eq Program.localIndex() = 0;
+  eq Function.localIndex() = 0;
   eq IdDecl.localIndex() {
-    if (isVariable())
+    if (isLocalVariable())
         return prevNode().localIndex()+1;
     else
         return prevNode().localIndex(); 
   }
+
+  inh int IdDecl.paramAddress();
+  eq Program.getChild().paramAddress() = 0;
+  eq Function.getArgument(int i).paramAddress() = i;
+
 
   inh ASTNode ASTNode.prevNode();
   eq ASTNode.getChild(int i).prevNode() = prevNode(i);
@@ -385,3 +394,4 @@ aspect CodeGen{
   syn ASTNode ASTNode.prevNode(int i) = i>0 ? getChild(i-1).lastNode() : this;
 
 }
+
